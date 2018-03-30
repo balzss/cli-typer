@@ -22,7 +22,7 @@ const sampleWordlist = function(path, k) {
     return words.slice(randomStart, randomStart + k);
 }
 
-const text = sampleWordlist('data/mostCommon1000.txt', 10).join(' ')
+let text = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
 
 process.stdout.write(text + '\n\n');
 let cursor = 0;
@@ -33,12 +33,18 @@ let results = '';
 let wrote = '';
 
 stdin.on( 'data', key => {
-    // exit on ctrl-c or when end of line is reached
-    if (key == SPECIAL.CTRL_C || cursor >= text.length) {
+    // exit on ctrl-c
+    if (key == SPECIAL.CTRL_C) {
         process.exit();
     }
 
-    if (key == SPECIAL.BACKSPACE) {
+    // end of current line
+    if(cursor >= text.length) {
+        text = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+        cursor = 0;
+        wrote = '';
+        results = '';
+    } else if (key == SPECIAL.BACKSPACE) {
         // don't delete before the current word
         if(text[cursor-1] == ' ') return;
         cursor--;
