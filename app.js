@@ -62,7 +62,9 @@ stdin.on( 'data', key => {
 
     // erease the whole thing and display the updated version
     stdout.clearLine();
-    stdout.moveCursor(0, -3);
+    stdout.moveCursor(0, -2);
+    stdout.clearLine();
+    stdout.moveCursor(0, -1);
     stdout.clearLine();
     stdout.cursorTo(0);
     stdout.write(results + text.substring(cursor) + '\n' + nextText + '\n\n' + wrote);
