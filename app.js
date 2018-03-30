@@ -33,7 +33,7 @@ let wrote = '';
 
 stdin.on( 'data', key => {
     // exit on ctrl-c or when end of line is reached
-    if (key == SPECIAL.CTRL_C || i >= text.length) {
+    if (key == SPECIAL.CTRL_C || cursor >= text.length) {
         process.exit();
     }
 
