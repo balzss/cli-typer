@@ -47,8 +47,8 @@ stdin.on( 'data', key => {
         wrote = '';
         results = '';
     } else if (key == SPECIAL.BACKSPACE) {
-        // don't delete before the current word
-        if(text[cursor-1] == ' ') return;
+        // do nothing on the beginning of the line
+        if(cursor == 0) return;
         cursor--;
         wrote = wrote.slice(0, -1);
         // the last char with the colored background takes up 10 characters
