@@ -23,8 +23,9 @@ const sampleWordlist = function(path, k) {
 }
 
 let text = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+let nextText = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
 
-process.stdout.write(text + '\n\n');
+process.stdout.write(text + '\n' + nextText + '\n\n');
 let cursor = 0;
 
 // the upper text which shows what to type
@@ -40,7 +41,8 @@ stdin.on( 'data', key => {
 
     // end of current line
     if(cursor >= text.length) {
-        text = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+        text = nextText;
+        nextText = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
         cursor = 0;
         wrote = '';
         results = '';
@@ -60,8 +62,8 @@ stdin.on( 'data', key => {
 
     // erease the whole thing and display the updated version
     stdout.clearLine();
-    stdout.moveCursor(0, -2);
+    stdout.moveCursor(0, -3);
     stdout.clearLine();
     stdout.cursorTo(0);
-    stdout.write(results + text.substring(cursor) + '\n\n' + wrote);
+    stdout.write(results + text.substring(cursor) + '\n' + nextText + '\n\n' + wrote);
 });
