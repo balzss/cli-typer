@@ -13,7 +13,15 @@ const SPECIAL = {
     BG_END: '\x1b[0m'
 }
 
-const text = 'hello szia hi mizu hali hello szia megint';
+const sampleWordlist = function(path, k) {
+    const fs = require('fs');
+    const fileContent = fs.readFileSync(path, 'utf8');
+    const words = fileContent.split('\n');
+    //return _.sample(words, k);  // if we ever wanna use underscore.js
+    return words.slice(0, k);
+}
+
+const text = sampleWordlist('data/words.txt', 10).join(' ')
 
 process.stdout.write(text + '\n\n');
 let cursor = 0;
