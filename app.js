@@ -1,39 +1,52 @@
-var stdin = process.stdin;
+const stdin = process.stdin;
+const stdout = process.stdout;
 
-stdin.setRawMode( true );
+stdin.setRawMode(true);
 stdin.resume();
-stdin.setEncoding( 'utf8' );
+stdin.setEncoding('utf8');
+
+const SPECIAL = {
+    CTRL_C: '\u0003',
+    BACKSPACE: '\u007f',
+    GREEN_BG: '\x1b[42m',
+    RED_BG: '\x1b[41m',
+    BG_END: '\x1b[0m'
+}
 
 const text = 'hello szia hi mizu hali hello szia megint';
-process.stdout.write(text + '\n\n');
-let i = 0;
-let wrote = '';
-let results = '';
 
-stdin.on( 'data', function( key ){
-    // ctrl-c
-    if ( key === '\u0003' || i == text.length) {
+process.stdout.write(text + '\n\n');
+let cursor = 0;
+
+// the upper text which shows what to type
+let results = '';
+// the lower text which show what you typed
+let wrote = '';
+
+stdin.on( 'data', key => {
+    // exit on ctrl-c or when end of line is reached
+    if (key == SPECIAL.CTRL_C || i >= text.length) {
         process.exit();
     }
-    if ( key === '\u007f' ) {
-        if( text[i-1] == ' ') return;
-        i--;
+
+    if (key == SPECIAL.BACKSPACE) {
+        // don't delete before the current word
+        if(text[cursor-1] == ' ') return;
+        cursor--;
         wrote = wrote.slice(0, -1);
+        // the last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
-    // } else if (key == ' '){
-    //     i++;
-    //     wrote = '';
-    //     results += ' ';
     } else {
-        i++;
+        cursor++;
         wrote += key;
-        results += (key == text[i-1] ? '\x1b[42m' : '\x1b[41m')  + text[i-1] + '\x1b[0m';
+        results += (key == text[cursor-1] ? SPECIAL.GREEN_BG : SPECIAL.RED_BG)  + text[cursor-1] + SPECIAL.BG_END;
     }
 
 
-    process.stdout.clearLine();
-    process.stdout.moveCursor(0, -2);
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-    process.stdout.write(results + text.substring(i) + '\n\n' + wrote);
+    // erease the whole thing and display the updated version
+    stdout.clearLine();
+    stdout.moveCursor(0, -2);
+    stdout.clearLine();
+    stdout.cursorTo(0);
+    stdout.write(results + text.substring(cursor) + '\n\n' + wrote);
 });
