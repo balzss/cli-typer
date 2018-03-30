@@ -18,10 +18,11 @@ const sampleWordlist = function(path, k) {
     const fileContent = fs.readFileSync(path, 'utf8');
     const words = fileContent.split('\n');
     //return _.sample(words, k);  // if we ever wanna use underscore.js
-    return words.slice(0, k);
+    const randomStart = Math.floor(Math.random() * (words.length - k))
+    return words.slice(randomStart, randomStart + k);
 }
 
-const text = sampleWordlist('data/words.txt', 10).join(' ')
+const text = sampleWordlist('data/nonNumericPasswords.txt', 10).join(' ')
 
 process.stdout.write(text + '\n\n');
 let cursor = 0;
