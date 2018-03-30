@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const stdin = process.stdin;
 const stdout = process.stdout;
 
@@ -14,15 +16,13 @@ const SPECIAL = {
 }
 
 const sampleWordlist = function(path, k) {
-    const fs = require('fs');
-    const fileContent = fs.readFileSync(path, 'utf8');
-    const words = fileContent.split('\n');
+    const words = fs.readFileSync(path, 'utf8').split('\n');
     //return _.sample(words, k);  // if we ever wanna use underscore.js
     const randomStart = Math.floor(Math.random() * (words.length - k))
     return words.slice(randomStart, randomStart + k);
 }
 
-const text = sampleWordlist('data/nonNumericPasswords.txt', 10).join(' ')
+const text = sampleWordlist('data/mostCommon1000.txt', 10).join(' ')
 
 process.stdout.write(text + '\n\n');
 let cursor = 0;
