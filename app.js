@@ -15,32 +15,30 @@ const SPECIAL = {
     BG_END: '\x1b[0m'
 }
 
-const random = function(min, max) {
+function random(min, max) {
     if (max == null) {
-      max = min;
-      min = 0;
+        max = min;
+        min = 0;
     }
     return min + Math.floor(Math.random() * (max - min + 1));
-  };
-
-const shuffle = function(obj) {
-  let sample = obj.slice();
-  const last = sample.length - 1;
-  for (let index = 0; index < sample.length; index++) {
-    let rand = random(index, last);
-    let temp = sample[index];
-    sample[index] = sample[rand];
-    sample[rand] = temp;
-  }
-  return sample.slice();
 };
 
-lineGenerator = function* (path, k) {
+function shuffle(obj) {
+    let sample = obj.slice();
+    const last = sample.length - 1;
+    for (let index = 0; index < sample.length; index++) {
+        let rand = random(index, last);
+        let temp = sample[index];
+        sample[index] = sample[rand];
+        sample[rand] = temp;
+    }
+    return sample.slice();
+};
+
+function* lineGenerator(path, k) {
     const shuffledWords = shuffle(fs.readFileSync(path, 'utf8').split('\n'));
-    let i = 0;
-    while (i+k < shuffledWords.length-1) {
+    for(let i = 0; i+k < shuffledWords.length-1; i += k) {
         yield shuffledWords.slice(i, i + k).join(' ');
-        i += k;
     }
 }
 
@@ -50,7 +48,7 @@ let results = '';
 let wrote = '';
 let started = false;
 let startTime;
-let givenSeconds = 60;
+let givenSeconds = 6;
 let wordsPerLine = 9;
 
 let corrects = 0;
@@ -65,19 +63,18 @@ let nextText = lineGen.next().value;
 process.stdout.write(text + '\n' + nextText + '\n\n');
 let cursor = 0;
 
-stdin.on( 'data', key => {
+stdin.on('data', key => {
     if(!started) {
         setTimeout(()=>{
             stdout.clearLine();
             stdout.cursorTo(0);
 
-            console.log('Time\'s up!');
-            console.log('WPM: ' + Math.round(corrects/5*(60/givenSeconds)));
-            // console.log('\n\nTime: ' + Math.floor((Date.now() - startTime)/1000) + 's');
-            console.log('All keystrokes: ' + keypresses);
-            console.log('Correct keystrokes: ' + corrects);
-            console.log('Wrong keystrokes: ' + errors);
-            console.log('Accuracy: ' + Math.round(corrects/keypresses * 10000)/100 + '%');
+            console.log(`Time's up!`);
+            console.log(`WPM: ${Math.round(corrects/5*(60/givenSeconds))}`);
+            console.log(`All keystrokes: ${keypresses}`);
+            console.log(`Correct keystrokes: ${corrects}`);
+            console.log(`Wrong keystrokes: ${errors}`);
+            console.log(`Accuracy: ${Math.round(corrects/keypresses * 10000)/100}%`);
             process.exit();
         }, givenSeconds * 1000);
 
