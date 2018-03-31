@@ -15,15 +15,39 @@ const SPECIAL = {
     BG_END: '\x1b[0m'
 }
 
-const sampleWordlist = function(path, k) {
-    const words = fs.readFileSync(path, 'utf8').split('\n');
-    //return _.sample(words, k);  // if we ever wanna use underscore.js
-    const randomStart = Math.floor(Math.random() * (words.length - k))
-    return words.slice(randomStart, randomStart + k);
+const random = function(min, max) {
+    if (max == null) {
+      max = min;
+      min = 0;
+    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+  };
+
+const shuffle = function(obj) {
+  let sample = obj.slice();
+  const last = sample.length - 1;
+  for (let index = 0; index < sample.length; index++) {
+    let rand = random(index, last);
+    let temp = sample[index];
+    sample[index] = sample[rand];
+    sample[rand] = temp;
+  }
+  return sample.slice();
+};
+
+lineGenerator = function* (path, k) {
+    const shuffledWords = shuffle(fs.readFileSync(path, 'utf8').split('\n'));
+    let i = 0;
+    while (i+k < shuffledWords.length-1) {
+        yield shuffledWords.slice(i, i + k).join(' ');
+        i += k;
+    }
 }
 
-let text = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
-let nextText = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+const lineGen = lineGenerator('data/mostCommon1000.txt', 8);
+
+let text = lineGen.next().value;
+let nextText = lineGen.next().value;
 
 process.stdout.write(text + '\n' + nextText + '\n\n');
 let cursor = 0;
@@ -65,7 +89,7 @@ stdin.on( 'data', key => {
     // end of current line
     if(cursor >= text.length) {
         text = nextText;
-        nextText = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+        nextText = lineGen.next().value;
         cursor = 0;
         wrote = '';
         results = '';
