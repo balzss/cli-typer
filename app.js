@@ -42,9 +42,6 @@ let keypresses = 0;
 
 stdin.on( 'data', key => {
     if(!started) {
-        startTime = Date.now();
-        started = true;
-
         setTimeout(()=>{
             console.log('\nTime\'s up!');
             console.log('WPM: ' + Math.floor(corrects/5*(60/givenSeconds)));
@@ -55,10 +52,13 @@ stdin.on( 'data', key => {
             console.log('Accuracy: ' + Math.floor(corrects/keypresses * 100) + '%');
             process.exit();
         }, givenSeconds * 1000);
+
+        startTime = Date.now();
+        started = true;
     }
+
     // exit on ctrl-c
     if (key == SPECIAL.CTRL_C) {
-        console.log('It was ' + Math.floor((Date.now() - startTime)/1000) + 's');
         process.exit();
     }
 
@@ -86,7 +86,7 @@ stdin.on( 'data', key => {
             results += SPECIAL.RED_BG;
             errors++;
         }
-        results += key + SPECIAL.BG_END;
+        results += text[cursor] + SPECIAL.BG_END;
 
         cursor++;
         keypresses++;
