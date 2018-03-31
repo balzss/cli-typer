@@ -43,13 +43,16 @@ let keypresses = 0;
 stdin.on( 'data', key => {
     if(!started) {
         setTimeout(()=>{
+            stdout.clearLine();
+            stdout.cursorTo(0);
+
             console.log('Time\'s up!');
-            console.log('WPM: ' + Math.floor(corrects/5*(60/givenSeconds)));
+            console.log('WPM: ' + Math.round(corrects/5*(60/givenSeconds)));
             // console.log('\n\nTime: ' + Math.floor((Date.now() - startTime)/1000) + 's');
             console.log('All keystrokes: ' + keypresses);
             console.log('Correct keystrokes: ' + corrects);
             console.log('Wrong keystrokes: ' + errors);
-            console.log('Accuracy: ' + Math.floor(corrects/keypresses * 100) + '%');
+            console.log('Accuracy: ' + Math.round(corrects/keypresses * 10000)/100 + '%');
             process.exit();
         }, givenSeconds * 1000);
 
