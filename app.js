@@ -22,12 +22,6 @@ const sampleWordlist = function(path, k) {
     return words.slice(randomStart, randomStart + k);
 }
 
-let text = sampleWordlist('data/mostCommon1000.txt', 11).join(' ')
-let nextText = sampleWordlist('data/mostCommon1000.txt', 11).join(' ')
-
-process.stdout.write(text + '\n' + nextText + '\n\n');
-let cursor = 0;
-
 // the upper text which shows what to type
 let results = '';
 // the lower text which show what you typed
@@ -35,10 +29,17 @@ let wrote = '';
 let started = false;
 let startTime;
 let givenSeconds = 60;
+let wordsPerLine = 9;
 
 let corrects = 0;
 let errors = 0;
 let keypresses = 0;
+
+let text = sampleWordlist('data/mostCommon1000.txt', wordsPerLine).join(' ')
+let nextText = sampleWordlist('data/mostCommon1000.txt', wordsPerLine).join(' ')
+
+process.stdout.write(text + '\n' + nextText + '\n\n');
+let cursor = 0;
 
 stdin.on( 'data', key => {
     if(!started) {
@@ -68,7 +69,7 @@ stdin.on( 'data', key => {
     // end of current line
     if(cursor >= text.length) {
         text = nextText;
-        nextText = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+        nextText = sampleWordlist('data/mostCommon1000.txt', wordsPerLine).join(' ')
         cursor = 0;
         wrote = '';
         results = '';
