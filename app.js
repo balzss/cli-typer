@@ -46,7 +46,7 @@ stdin.on( 'data', key => {
         started = true;
 
         setTimeout(()=>{
-            console.log('Time\'s up!');
+            console.log('\nTime\'s up!');
             console.log('WPM: ' + Math.floor(corrects/5*(60/givenSeconds)));
             // console.log('\n\nTime: ' + Math.floor((Date.now() - startTime)/1000) + 's');
             console.log('All keystrokes: ' + keypresses);
