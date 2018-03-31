@@ -22,8 +22,8 @@ const sampleWordlist = function(path, k) {
     return words.slice(randomStart, randomStart + k);
 }
 
-let text = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
-let nextText = sampleWordlist('data/mostCommon1000.txt', 6).join(' ')
+let text = sampleWordlist('data/mostCommon1000.txt', 11).join(' ')
+let nextText = sampleWordlist('data/mostCommon1000.txt', 11).join(' ')
 
 process.stdout.write(text + '\n' + nextText + '\n\n');
 let cursor = 0;
@@ -34,7 +34,7 @@ let results = '';
 let wrote = '';
 let started = false;
 let startTime;
-let givenSeconds = 26;
+let givenSeconds = 60;
 
 let corrects = 0;
 let errors = 0;
