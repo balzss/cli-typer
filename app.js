@@ -44,14 +44,6 @@ lineGenerator = function* (path, k) {
     }
 }
 
-const lineGen = lineGenerator('data/mostCommon1000.txt', 8);
-
-let text = lineGen.next().value;
-let nextText = lineGen.next().value;
-
-process.stdout.write(text + '\n' + nextText + '\n\n');
-let cursor = 0;
-
 // the upper text which shows what to type
 let results = '';
 // the lower text which show what you typed
@@ -65,8 +57,10 @@ let corrects = 0;
 let errors = 0;
 let keypresses = 0;
 
-let text = sampleWordlist('data/mostCommon1000.txt', wordsPerLine).join(' ')
-let nextText = sampleWordlist('data/mostCommon1000.txt', wordsPerLine).join(' ')
+const lineGen = lineGenerator('data/mostCommon1000.txt', wordsPerLine);
+
+let text = lineGen.next().value;
+let nextText = lineGen.next().value;
 
 process.stdout.write(text + '\n' + nextText + '\n\n');
 let cursor = 0;
