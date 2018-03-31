@@ -32,10 +32,33 @@ let cursor = 0;
 let results = '';
 // the lower text which show what you typed
 let wrote = '';
+let started = false;
+let startTime;
+let givenSeconds = 26;
+
+let corrects = 0;
+let errors = 0;
+let keypresses = 0;
 
 stdin.on( 'data', key => {
+    if(!started) {
+        startTime = Date.now();
+        started = true;
+
+        setTimeout(()=>{
+            console.log('Time\'s up!');
+            console.log('WPM: ' + Math.floor(corrects/5*(60/givenSeconds)));
+            // console.log('\n\nTime: ' + Math.floor((Date.now() - startTime)/1000) + 's');
+            console.log('All keystrokes: ' + keypresses);
+            console.log('Correct keystrokes: ' + corrects);
+            console.log('Wrong keystrokes: ' + errors);
+            console.log('Accuracy: ' + Math.floor(corrects/keypresses * 100) + '%');
+            process.exit();
+        }, givenSeconds * 1000);
+    }
     // exit on ctrl-c
     if (key == SPECIAL.CTRL_C) {
+        console.log('It was ' + Math.floor((Date.now() - startTime)/1000) + 's');
         process.exit();
     }
 
@@ -49,14 +72,24 @@ stdin.on( 'data', key => {
     } else if (key == SPECIAL.BACKSPACE) {
         // do nothing on the beginning of the line
         if(cursor == 0) return;
-        cursor--;
         wrote = wrote.slice(0, -1);
         // the last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
+        cursor--;
     } else {
-        cursor++;
         wrote += key;
-        results += (key == text[cursor-1] ? SPECIAL.GREEN_BG : SPECIAL.RED_BG)  + text[cursor-1] + SPECIAL.BG_END;
+
+        if(key == text[cursor]){
+            results += SPECIAL.GREEN_BG;
+            corrects++;
+        } else {
+            results += SPECIAL.RED_BG;
+            errors++;
+        }
+        results += key + SPECIAL.BG_END;
+
+        cursor++;
+        keypresses++;
     }
 
 
