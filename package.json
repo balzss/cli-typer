@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Practice touch typing in the commandline and measure your skills",
   "main": "app.js",
+  "engineStrict" : true,
+  "engines" : {
+    "node" : ">=6.4.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
