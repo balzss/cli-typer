@@ -1,3 +1,16 @@
+#!/usr/bin/env node
+
+// show help if at least one of these flags are present
+if(process.argv.indexOf('-h') != process.argv.indexOf('--help')){
+    console.log('Usage:');
+    console.log('  cli-typer [options]');
+    console.log('\nOptions:');
+    console.log('  -t, --time\t\tGiven time in seconds to complete the test');
+    console.log('  -w, --words\t\tNumber of words to display per line');
+    console.log('  -i, --input\t\tPath to a wordlist file with new line separated words');
+    process.exit();
+}
+
 const fs = require('fs');
 
 const stdin = process.stdin;

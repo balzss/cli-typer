@@ -1,0 +1,23 @@
+{
+  "name": "cli-typer",
+  "version": "1.0.0",
+  "description": "Practice touch typing in the commandline and measure your skills",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balzss/cli-typer.git"
+  },
+  "keywords": [
+    "typing",
+    "touch-type"
+  ],
+  "author": "balzss",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/balzss/cli-typer/issues"
+  },
+  "homepage": "https://github.com/balzss/cli-typer#readme"
+}
