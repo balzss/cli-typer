@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+      "cli-typer": "./app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/balzss/cli-typer.git"
@@ -14,7 +17,16 @@
     "typing",
     "touch-type"
   ],
-  "author": "balzss",
+  "author": {
+      "name" : "Balazs Saros",
+      "email" : "balazs.saros@gmail.com",
+      "url" : "https://github.com/balzss"
+  },
+  "contributors": [{
+      "name" : "Mice Papai",
+      "email" : "qwhexz@gmail.com",
+      "url" : "https://github.com/qwhex"
+  }],
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/balzss/cli-typer/issues"

@@ -8,6 +8,7 @@ if(process.argv.indexOf('-h') != process.argv.indexOf('--help')){
     console.log('  -t, --time\t\tGiven time in seconds to complete the test');
     console.log('  -w, --words\t\tNumber of words to display per line');
     console.log('  -i, --input\t\tPath to a wordlist file with new line separated words');
+    console.log('  -h, --help\t\tShow help');
     process.exit();
 }
 
