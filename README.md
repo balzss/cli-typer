@@ -1,7 +1,7 @@
-Practice touch typing in the commandline and measure your skills.
+Practice touch typing in the commandline and measure your skills.  
 Coauthored by [qwhex](https://github.com/qwhex)
 
-### Install
+## Install
 
 Via npm:
 ```
@@ -15,7 +15,7 @@ cd cli-typer
 npm install
 ```
 
-### Usage
+## Usage
 ```
 cli-typer [options]
 ```
