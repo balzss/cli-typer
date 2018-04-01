@@ -7,6 +7,19 @@ stdin.setRawMode(true);
 stdin.resume();
 stdin.setEncoding('utf8');
 
+function printStats(){
+    stdout.clearLine();
+    stdout.cursorTo(0);
+
+    console.log(`Time's up!`);
+    console.log(`WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`);
+    console.log(`All keystrokes: ${stats.keypresses}`);
+    console.log(`Correct keystrokes: ${stats.corrects}`);
+    console.log(`Wrong keystrokes: ${stats.errors}`);
+    console.log(`Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`);
+    process.exit();
+}
+
 function initConfig(){
     return {
         wordsPerLine: parseInt(argvParser(['-w', '--words'], '9'), 10),
@@ -41,7 +54,7 @@ const SPECIAL = {
     BG_END: '\x1b[0m'
 }
 
-const config = initConfig();
+const CONFIG = initConfig();
 
 // the upper text which shows what to type
 let results = '';
@@ -56,7 +69,7 @@ let stats = {
     keypresses: 0
 }
 
-const lineGen = lineGenerator(config.inputFile, config.wordsPerLine);
+const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 
 let text = lineGen.next().value;
 let nextText = lineGen.next().value;
@@ -65,27 +78,15 @@ process.stdout.write(text + '\n' + nextText + '\n\n');
 let cursor = 0;
 
 stdin.on('data', key => {
+    if(!started) {
+        setTimeout(printStats, CONFIG.givenSeconds * 1000);
+        startTime = Date.now();
+        started = true;
+    }
+
     // exit on ctrl-c
     if (key == SPECIAL.CTRL_C) {
         process.exit();
-    }
-
-    if(!started) {
-        setTimeout(()=>{
-            stdout.clearLine();
-            stdout.cursorTo(0);
-
-            console.log(`Time's up!`);
-            console.log(`WPM: ${Math.round(stats.corrects/5*(60/config.givenSeconds))}`);
-            console.log(`All keystrokes: ${stats.keypresses}`);
-            console.log(`Correct keystrokes: ${stats.corrects}`);
-            console.log(`Wrong keystrokes: ${stats.errors}`);
-            console.log(`Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`);
-            process.exit();
-        }, config.givenSeconds * 1000);
-
-        startTime = Date.now();
-        started = true;
     }
 
     // end of current line
