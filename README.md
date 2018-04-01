@@ -1,5 +1,5 @@
 Practice touch typing in the commandline and measure your skills.  
-Coauthored by [qwhex](https://github.com/qwhex)
+Coauthored by [qwhex](https://github.com/qwhex).
 
 ## Install
 
@@ -12,7 +12,7 @@ Manually:
 ```
 git clone https://github.com/balzss/cli-typer cli-typer
 cd cli-typer
-npm install
+npm install -g .
 ```
 
 ## Usage
