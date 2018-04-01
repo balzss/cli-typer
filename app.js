@@ -38,7 +38,7 @@ function initConfig(){
     return {
         wordsPerLine: parseInt(argvParser(['-w', '--words'], '9'), 10),
         givenSeconds: parseInt(argvParser(['-t', '--time'], '60'), 10),
-        inputFile: argvParser(['-i', '--input'], 'data/mostCommon1000.txt')
+        inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt')
     }
 }
 
