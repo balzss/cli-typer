@@ -101,15 +101,6 @@ stdin.on('data', key => {
     // exit on ctrl-c
     if (key == SPECIAL.CTRL_C) {
         process.exit();
-    }
-
-    // end of current line
-    if(cursor >= text.length) {
-        text = nextText;
-        nextText = lineGen.next().value;
-        cursor = 0;
-        wrote = '';
-        results = '';
     } else if (key == SPECIAL.BACKSPACE) {
         // do nothing on the beginning of the line
         if(cursor == 0) return;
@@ -117,7 +108,14 @@ stdin.on('data', key => {
         // the last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
         cursor--;
+    } else if(cursor >= text.length) {
+        text = nextText;
+        nextText = lineGen.next().value;
+        cursor = 0;
+        wrote = '';
+        results = '';
     } else if(!key.match(/[a-zA-Z0-9\s]/)) {
+        // return on non alphanumeric keys
         return;
     } else {
         wrote += key;
