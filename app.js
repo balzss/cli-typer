@@ -35,8 +35,8 @@ function printStats(){
 
 function initConfig(){
     return {
-        wordsPerLine: parseInt(argvParser(['-w', '--words'], '9'), 10),
-        givenSeconds: parseInt(argvParser(['-t', '--time'], '60'), 10),
+        wordsPerLine: Math.max(1, parseInt(argvParser(['-w', '--words'], '9'), 10)),
+        givenSeconds: Math.max(1, parseInt(argvParser(['-t', '--time'], '60'), 10)),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt')
     }
 }
