@@ -22,15 +22,14 @@ stdin.resume();
 stdin.setEncoding('utf8');
 
 function printStats(){
-    stdout.clearLine();
-    stdout.cursorTo(0);
-
-    console.log(`Time's up!`);
-    console.log(`WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`);
-    console.log(`All keystrokes: ${stats.keypresses}`);
-    console.log(`Correct keystrokes: ${stats.corrects}`);
-    console.log(`Wrong keystrokes: ${stats.errors}`);
-    console.log(`Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`);
+    console.log('\n├' + ('─'.repeat(78)) + '');
+    console.log(`│ Time's up!`);
+    console.log(`│ WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`);
+    console.log(`│ All keystrokes: ${stats.keypresses}`);
+    console.log(`│ Correct keystrokes: ${stats.corrects}`);
+    console.log(`│ Wrong keystrokes: ${stats.errors}`);
+    console.log(`│ Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`);
+    console.log('└' + ('─'.repeat(78)) + '');
     process.exit();
 }
 
@@ -88,7 +87,7 @@ const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 let text = lineGen.next().value;
 let nextText = lineGen.next().value;
 
-process.stdout.write(text + '\n' + nextText + '\n\n');
+process.stdout.write('┌' + ('─'.repeat(78)) + '\n│ ' + text + '\n│ ' + nextText + '\n├' + ('─'.repeat(78)) + '\n│ ');
 let cursor = 0;
 
 stdin.on('data', key => {
@@ -139,5 +138,5 @@ stdin.on('data', key => {
     stdout.moveCursor(0, -1);
     stdout.clearLine();
     stdout.cursorTo(0);
-    stdout.write(results + text.substring(cursor) + '\n' + nextText + '\n\n' + wrote);
+    stdout.write('│ ' + results + text.substring(cursor) + '\n│ ' + nextText + '\n\n│ ' + wrote);
 });
