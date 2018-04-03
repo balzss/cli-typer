@@ -47,7 +47,7 @@ function validateIntArg(flags, arg){
         console.log(`"${arg}"\nyou're stupid boi/gurl!!!\n`);
         return false;
     }
-    if (arg < 1){
+    if (intArg < 1){
         console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`)
         return false;
     }
