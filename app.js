@@ -35,16 +35,37 @@ function printStats(){
 
 function initConfig(){
     return {
-        wordsPerLine: Math.max(1, parseInt(argvParser(['-w', '--words'], '9'), 10)),
-        givenSeconds: Math.max(1, parseInt(argvParser(['-t', '--time'], '60'), 10)),
+        wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
+        givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt')
     }
 }
 
-function argvParser(flags, dflt){
+function validateIntArg(flags, arg){
+    const intArg = parseInt(arg, 10);
+    if (isNaN(intArg)){
+        console.log(`"${arg}"\nyou're stupid boi!!!\n`);
+        return false;
+    }
+    if (arg < 1){
+        console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`)
+        return false;
+    }
+    return intArg;
+}
+
+function argvParser(flags, dflt, validateFunction=false){
     for(flag of flags){
         if(process.argv.indexOf(flag) != -1) {
-            return process.argv[process.argv.indexOf(flag) + 1];
+            const param = process.argv[process.argv.indexOf(flag) + 1];
+            if (!validateFunction) {
+                return param;
+            }
+            const validatedParam = validateFunction(flags, param);
+            if (!validatedParam) {
+               break;
+            }
+            return validatedParam;
         }
     }
     return dflt;
