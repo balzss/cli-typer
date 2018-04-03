@@ -44,7 +44,7 @@ function initConfig(){
 function validateIntArg(flags, arg){
     const intArg = parseInt(arg, 10);
     if (isNaN(intArg)){
-        console.log(`"${arg}"\nyou're stupid boi!!!\n`);
+        console.log(`"${arg}"\nyou're stupid boi/gurl!!!\n`);
         return false;
     }
     if (arg < 1){
