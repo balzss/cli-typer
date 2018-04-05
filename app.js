@@ -71,10 +71,29 @@ function argvParser(flags, dflt, validateFunction=false) {
     return dflt;
 }
 
+function random(min, max) {
+    if (max == null) {
+        max = min;
+        min = 0;
+    }
+    return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function shuffle(obj) {
+    let sample = obj.slice();
+    const last = sample.length - 1;
+    for (let index = 0; index < sample.length; index++) {
+        let rand = random(index, last);
+        let temp = sample[index];
+        sample[index] = sample[rand];
+        sample[rand] = temp;
+    }
+    return sample.slice();
+}
+
 function* lineGenerator(path, k) {
     const words = fs.readFileSync(path, 'utf8').split('\n');
-    // shuffle the array (from: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4)
-    const shuffledWords = words.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
+    const shuffledWords = shuffle(words);
     for (let i = 0; i+k < shuffledWords.length-1; i += k) {
         yield shuffledWords.slice(i, i + k).join(' ');
     }
