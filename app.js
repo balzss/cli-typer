@@ -107,6 +107,8 @@ const SPECIAL = {
     BG_END: '\x1b[0m'
 }
 
+const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
+
 const CONFIG = initConfig();
 
 // the upper text which shows what to type
@@ -153,8 +155,9 @@ stdin.on('data', key => {
         cursor = 0;
         wrote = '';
         results = '';
-    } else if (!key.match(/[a-zA-Z0-9\s]/)) {
-        // return on non alphanumeric keys
+    } else if (!ALPHANUMERIC.test(key)) {
+        // return on non-alphanumeric unicode characters
+        // regex generated with: http://kourge.net/projects/regexp-unicode-block
         return;
     } else {
         wrote += key;
