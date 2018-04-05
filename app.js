@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // show help if at least one of these flags are present
-if(process.argv.indexOf('-h') != process.argv.indexOf('--help')){
+if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
     console.log('Usage:');
     console.log('  cli-typer [options]');
     console.log('\nOptions:');
@@ -21,7 +21,7 @@ stdin.setRawMode(true);
 stdin.resume();
 stdin.setEncoding('utf8');
 
-function printStats(){
+function printStats() {
     console.log('\n├' + ('─'.repeat(78)) + '');
     console.log(`│ Time's up!`);
     console.log(`│ WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`);
@@ -33,7 +33,7 @@ function printStats(){
     process.exit();
 }
 
-function initConfig(){
+function initConfig() {
     return {
         wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
@@ -41,29 +41,29 @@ function initConfig(){
     }
 }
 
-function validateIntArg(flags, arg){
+function validateIntArg(flags, arg) {
     const intArg = parseInt(arg, 10);
-    if (isNaN(intArg)){
+    if (isNaN(intArg)) {
         console.log(`"${arg}"\nyou're stupid boi/gurl!!!\n`);
         return false;
     }
-    if (intArg < 1){
+    if (intArg < 1) {
         console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`)
         return false;
     }
     return intArg;
 }
 
-function argvParser(flags, dflt, validateFunction=false){
-    for(flag of flags){
-        if(process.argv.indexOf(flag) != -1) {
+function argvParser(flags, dflt, validateFunction=false) {
+    for (flag of flags) {
+        if (process.argv.indexOf(flag) != -1) {
             const param = process.argv[process.argv.indexOf(flag) + 1];
             if (!validateFunction) {
                 return param;
             }
             const validatedParam = validateFunction(flags, param);
             if (!validatedParam) {
-               break;
+                break;
             }
             return validatedParam;
         }
@@ -75,7 +75,7 @@ function* lineGenerator(path, k) {
     const words = fs.readFileSync(path, 'utf8').split('\n');
     // shuffle the array (from: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4)
     const shuffledWords = words.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
-    for(let i = 0; i+k < shuffledWords.length-1; i += k) {
+    for (let i = 0; i+k < shuffledWords.length-1; i += k) {
         yield shuffledWords.slice(i, i + k).join(' ');
     }
 }
@@ -112,7 +112,7 @@ process.stdout.write('┌' + ('─'.repeat(78)) + '\n│ ' + text + '\n│ ' + n
 let cursor = 0;
 
 stdin.on('data', key => {
-    if(!started) {
+    if (!started) {
         setTimeout(printStats, CONFIG.givenSeconds * 1000);
         startTime = Date.now();
         started = true;
@@ -123,24 +123,24 @@ stdin.on('data', key => {
         process.exit();
     } else if (key == SPECIAL.BACKSPACE) {
         // do nothing on the beginning of the line
-        if(cursor == 0) return;
+        if (cursor == 0) return;
         wrote = wrote.slice(0, -1);
         // the last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
         cursor--;
-    } else if(cursor >= text.length) {
+    } else if (cursor >= text.length) {
         text = nextText;
         nextText = lineGen.next().value;
         cursor = 0;
         wrote = '';
         results = '';
-    } else if(!key.match(/[a-zA-Z0-9\s]/)) {
+    } else if (!key.match(/[a-zA-Z0-9\s]/)) {
         // return on non alphanumeric keys
         return;
     } else {
         wrote += key;
 
-        if(key == text[cursor]){
+        if (key == text[cursor]) {
             results += SPECIAL.GREEN_BG;
             stats.corrects++;
         } else {
