@@ -24,3 +24,8 @@ cli-typer [options]
 - `-t, --time` Given time in seconds to complete the test
 - `-w, --words` Number of words to display per line
 - `-i, --input` Path to a wordlist file with new line separated words
+
+## Wordlists
+
+### Linux
+You can find additional wordlists in the `/usr/share/dict` directory. Install additional dictionaries on debian-based distributions with the `sudo apt install w[lang]` command, e.g. `sudo apt install wfrench` to install the French wordlist. Check out available packages [here](https://packages.debian.org/sid/wordlist).
