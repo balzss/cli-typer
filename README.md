@@ -2,17 +2,8 @@ Practice touch typing in the commandline and measure your skills.
 Coauthored by [qwhex](https://github.com/qwhex).
 
 ## Install
-
-Via npm:
 ```
 npm install -g balzss/cli-typer
-```
-
-Manually:
-```
-git clone https://github.com/balzss/cli-typer cli-typer
-cd cli-typer
-npm install -g .
 ```
 
 ## Usage
@@ -28,4 +19,9 @@ cli-typer [options]
 ## Wordlists
 
 ### Linux
-You can find additional wordlists in the `/usr/share/dict` directory. Install dictionaries on debian-based distributions with the `sudo apt install w[lang]` command, e.g. `sudo apt install wfrench` to install the French wordlist. Check out available packages [here](https://packages.debian.org/sid/wordlist).
+You can find additional wordlists in the `/usr/share/dict` directory and use them like so:
+```
+cli-typer -i /usr/share/dict/words
+```
+
+Install dictionaries on debian-based distributions with the `sudo apt install w[lang]` command, e.g. `sudo apt install wfrench` to install the French wordlist. Check out available packages [here](https://packages.debian.org/sid/wordlist).
