@@ -28,4 +28,4 @@ cli-typer [options]
 ## Wordlists
 
 ### Linux
-You can find additional wordlists in the `/usr/share/dict` directory. Install additional dictionaries on debian-based distributions with the `sudo apt install w[lang]` command, e.g. `sudo apt install wfrench` to install the French wordlist. Check out available packages [here](https://packages.debian.org/sid/wordlist).
+You can find additional wordlists in the `/usr/share/dict` directory. Install dictionaries on debian-based distributions with the `sudo apt install w[lang]` command, e.g. `sudo apt install wfrench` to install the French wordlist. Check out available packages [here](https://packages.debian.org/sid/wordlist).
