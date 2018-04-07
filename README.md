@@ -1,6 +1,8 @@
 Practice touch typing in the commandline and measure your skills.  
 Coauthored by [qwhex](https://github.com/qwhex).
 
+![cli-typer demo gif](https://raw.githubusercontent.com/balzss/cli-typer/master/demo.gif)
+
 ## Install
 ```
 npm install -g balzss/cli-typer
@@ -15,6 +17,7 @@ cli-typer [options]
 - `-t, --time` Given time in seconds to complete the test
 - `-w, --words` Number of words to display per line
 - `-i, --input` Path to a wordlist file with new line separated words
+- `-V, --verbose` Show settings on start
 
 ## Wordlists
 
