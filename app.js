@@ -89,11 +89,11 @@ function printConfig(config) {
     console.log(boxText(plural(config.givenSeconds, 'second')));
     console.log(boxText(`${plural(config.wordsPerLine, 'word')} per line`));
     console.log(boxText(`Input: ${config.inputFile}`));
-    console.log(boxBottom() + '\n');
+    console.log(boxBottom());
 }
 
 function printInstructions() {
-    console.log(`${SPECIAL.GREEN_TEXT}➜ Start typing the words below:${SPECIAL.RESET}\n`)
+    console.log(`\n ✅ Start typing the words below:\n`)
 }
 
 function validateIntArg(flags, arg) {
