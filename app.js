@@ -22,15 +22,49 @@ stdin.setRawMode(true);
 stdin.resume();
 stdin.setEncoding('utf8');
 
+const SPECIAL = {
+    CTRL_C: '\u0003',
+    BACKSPACE: '\u007f',
+    GREEN_BG: '\x1b[42m',
+    RED_BG: '\x1b[41m',
+    GREEN_TEXT: '\x1b[32m',
+    RESET: '\x1b[0m'
+}
+
+const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
+const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+
+function removeAnsiEscape(text) {
+    return text.replace(ANSI_ESCAPE, '');
+}
+
+function boxTop(width=79) {
+    return '╭' + ('─'.repeat(width-2)) + '╮';
+}
+
+function boxText(text, width=79) {
+    const spaceAvailable = width-4-removeAnsiEscape(text).length;
+    if (spaceAvailable < 0) return '│ ' + text;
+    return '│ ' + text + ' '.repeat(spaceAvailable) + ' │';
+}
+
+function boxSeparator(width=79) {
+    return '├' + ('─'.repeat(width-2)) + '┤';
+}
+
+function boxBottom(width=79) {
+    return '╰' + ('─'.repeat(width-2)) + '╯';
+}
+
 function printStats() {
-    console.log('\n├' + ('─'.repeat(78)) + '');
-    console.log(`│ Time's up!`);
-    console.log(`│ WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`);
-    console.log(`│ All keystrokes: ${stats.keypresses}`);
-    console.log(`│ Correct keystrokes: ${stats.corrects}`);
-    console.log(`│ Wrong keystrokes: ${stats.errors}`);
-    console.log(`│ Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`);
-    console.log('╰' + ('─'.repeat(78)) + '');
+    console.log('\n' + boxSeparator());
+    console.log(boxText(`Time's up!`));
+    console.log(boxText(`WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`));
+    console.log(boxText(`All keystrokes: ${stats.keypresses}`));
+    console.log(boxText(`Correct keystrokes: ${stats.corrects}`));
+    console.log(boxText(`Wrong keystrokes: ${stats.errors}`));
+    console.log(boxText(`Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`));
+    console.log(boxBottom());
     process.exit();
 }
 
@@ -49,13 +83,13 @@ function plural(n, noun) {
 }
 
 function printConfig(config) {
-    console.log('╭' + ('─'.repeat(78)));
-    console.log('│ Settings');
-    console.log('├' + ('─'.repeat(78)));
-    console.log(`│ ${plural(config.givenSeconds, 'second')}`);
-    console.log(`│ ${plural(config.wordsPerLine, 'word')} per line`);
-    console.log(`│ Input: ${config.inputFile}`);
-    console.log('╰' + ('─'.repeat(78)) + '\n');
+    console.log(boxTop());
+    console.log(boxText('Settings'));
+    console.log(boxSeparator());
+    console.log(boxText(plural(config.givenSeconds, 'second')));
+    console.log(boxText(`${plural(config.wordsPerLine, 'word')} per line`));
+    console.log(boxText(`Input: ${config.inputFile}`));
+    console.log(boxBottom() + '\n');
 }
 
 function printInstructions() {
@@ -120,16 +154,6 @@ function* lineGenerator(path, k) {
     }
 }
 
-const SPECIAL = {
-    CTRL_C: '\u0003',
-    BACKSPACE: '\u007f',
-    GREEN_BG: '\x1b[42m',
-    RED_BG: '\x1b[41m',
-    GREEN_TEXT: '\x1b[32m',
-    RESET: '\x1b[0m'
-}
-
-const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
 
 const CONFIG = initConfig();
 if (CONFIG.verbose) printConfig(CONFIG);
@@ -153,7 +177,7 @@ const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 let text = lineGen.next().value;
 let nextText = lineGen.next().value;
 
-process.stdout.write('╭' + ('─'.repeat(78)) + '\n│ ' + text + '\n│ ' + nextText + '\n├' + ('─'.repeat(78)) + '\n│ ');
+process.stdout.write(boxTop() + '\n' + boxText(text) + '\n' + boxText(nextText) + '\n' + boxSeparator() + '\n│ ');
 let cursor = 0;
 
 stdin.on('data', key => {
@@ -205,5 +229,5 @@ stdin.on('data', key => {
     stdout.moveCursor(0, -1);
     stdout.clearLine();
     stdout.cursorTo(0);
-    stdout.write('│ ' + results + text.substring(cursor) + '\n│ ' + nextText + '\n\n│ ' + wrote);
+    stdout.write(boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
 });
