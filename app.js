@@ -8,6 +8,7 @@ if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
     console.log('  -t, --time\t\tGiven time in seconds to complete the test');
     console.log('  -w, --words\t\tNumber of words to display per line');
     console.log('  -i, --input\t\tPath to a wordlist file with new line separated words');
+    console.log('  -V, --verbose\t\tShow settings on start');
     console.log('  -h, --help\t\tShow help');
     process.exit();
 }
@@ -29,7 +30,7 @@ function printStats() {
     console.log(`│ Correct keystrokes: ${stats.corrects}`);
     console.log(`│ Wrong keystrokes: ${stats.errors}`);
     console.log(`│ Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`);
-    console.log('└' + ('─'.repeat(78)) + '');
+    console.log('╰' + ('─'.repeat(78)) + '');
     process.exit();
 }
 
@@ -37,8 +38,28 @@ function initConfig() {
     return {
         wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
-        inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt')
+        inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt'),
+        verbose: process.argv.indexOf('-V') != process.argv.indexOf('--verbose')
     }
+}
+
+function plural(n, noun) {
+    const output = `${n} ${noun}`;
+    return n !== 1 ? output + 's' : output;
+}
+
+function printConfig(config) {
+    console.log('╭' + ('─'.repeat(78)));
+    console.log('│ Settings');
+    console.log('├' + ('─'.repeat(78)));
+    console.log(`│ ${plural(config.givenSeconds, 'second')}`);
+    console.log(`│ ${plural(config.wordsPerLine, 'word')} per line`);
+    console.log(`│ Input: ${config.inputFile}`);
+    console.log('╰' + ('─'.repeat(78)) + '\n');
+}
+
+function printInstructions() {
+    console.log(`${SPECIAL.GREEN_TEXT}➜ Start typing the words below:${SPECIAL.RESET}\n`)
 }
 
 function validateIntArg(flags, arg) {
@@ -104,16 +125,19 @@ const SPECIAL = {
     BACKSPACE: '\u007f',
     GREEN_BG: '\x1b[42m',
     RED_BG: '\x1b[41m',
-    BG_END: '\x1b[0m'
+    GREEN_TEXT: '\x1b[32m',
+    RESET: '\x1b[0m'
 }
 
 const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
 
 const CONFIG = initConfig();
+if (CONFIG.verbose) printConfig(CONFIG);
+printInstructions();
 
 // the upper text which shows what to type
 let results = '';
-// the lower text which show what you typed
+// the lower text which shows what you typed
 let wrote = '';
 let started = false;
 let startTime;
@@ -129,7 +153,7 @@ const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 let text = lineGen.next().value;
 let nextText = lineGen.next().value;
 
-process.stdout.write('┌' + ('─'.repeat(78)) + '\n│ ' + text + '\n│ ' + nextText + '\n├' + ('─'.repeat(78)) + '\n│ ');
+process.stdout.write('╭' + ('─'.repeat(78)) + '\n│ ' + text + '\n│ ' + nextText + '\n├' + ('─'.repeat(78)) + '\n│ ');
 let cursor = 0;
 
 stdin.on('data', key => {
@@ -169,12 +193,12 @@ stdin.on('data', key => {
             results += SPECIAL.RED_BG;
             stats.errors++;
         }
-        results += text[cursor] + SPECIAL.BG_END;
+        results += text[cursor] + SPECIAL.RESET;
         cursor++;
         stats.keypresses++;
     }
 
-    // erease the whole thing and display the updated version
+    // erease the whole thing and display the next words to type
     stdout.clearLine();
     stdout.moveCursor(0, -2);
     stdout.clearLine();
