@@ -91,7 +91,7 @@ function printConfig(config) {
     console.log(boxText(plural(config.givenSeconds, 'second')));
     console.log(boxText(`${plural(config.wordsPerLine, 'word')} per line`));
     console.log(boxText(`Input: ${config.inputFile}`));
-    console.log(boxText(`Log path: ${config.savePath}`))
+    if (config.savePath !== false) console.log(boxText(`Save path: ${config.savePath}`))
     console.log(boxBottom());
 }
 
