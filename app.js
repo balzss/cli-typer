@@ -9,6 +9,7 @@ if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
     console.log('  -w, --words\t\tNumber of words to display per line');
     console.log('  -i, --input\t\tPath to a wordlist file with new line separated words');
     console.log('  -V, --verbose\t\tShow settings on start');
+    console.log('  -s, --save\t\tPath to file for saving results');
     console.log('  -h, --help\t\tShow help');
     process.exit();
 }
@@ -59,11 +60,11 @@ function boxBottom(width=79) {
 function printStats() {
     console.log('\n' + boxSeparator());
     console.log(boxText(`Time's up!`));
-    console.log(boxText(`WPM: ${Math.round(stats.corrects/5*(60/CONFIG.givenSeconds))}`));
+    console.log(boxText(`WPM: ${stats.wpm}`));
     console.log(boxText(`All keystrokes: ${stats.keypresses}`));
     console.log(boxText(`Correct keystrokes: ${stats.corrects}`));
     console.log(boxText(`Wrong keystrokes: ${stats.errors}`));
-    console.log(boxText(`Accuracy: ${Math.round(stats.corrects/stats.keypresses * 10000)/100}%`));
+    console.log(boxText(`Accuracy: ${stats.accuracy}%`));
     console.log(boxBottom());
     process.exit();
 }
@@ -73,7 +74,8 @@ function initConfig() {
         wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt'),
-        verbose: process.argv.indexOf('-V') != process.argv.indexOf('--verbose')
+        verbose: process.argv.indexOf('-V') != process.argv.indexOf('--verbose'),
+        savePath: argvParser(['-s', '--save'], false)
     }
 }
 
@@ -89,6 +91,7 @@ function printConfig(config) {
     console.log(boxText(plural(config.givenSeconds, 'second')));
     console.log(boxText(`${plural(config.wordsPerLine, 'word')} per line`));
     console.log(boxText(`Input: ${config.inputFile}`));
+    if (config.savePath !== false) console.log(boxText(`Save path: ${config.savePath}`))
     console.log(boxBottom());
 }
 
@@ -154,6 +157,39 @@ function* lineGenerator(path, k) {
     }
 }
 
+function saveStats() {
+
+  date = new Date(startTime).toLocaleString();
+  headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
+  content = `${date}\t${CONFIG.givenSeconds}\t${stats.wpm}\t${stats.keypresses}\t${stats.corrects}\t${stats.errors}\t${stats.accuracy}\t${CONFIG.inputFile}\n`
+
+  try {
+    fs.statSync(CONFIG.savePath).isFile()
+    // If the file exists, assume headers have already been written.
+    data = content;
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      // Since the file does not exist, write the headers as well.
+      data = headers + content;
+    } else {
+      throw e;
+    }
+  }
+
+  fs.appendFileSync(CONFIG.savePath, data, (err) => {if (err) throw err});
+}
+
+function calcStats(stats) {
+  stats.wpm = Math.round(stats.corrects/5*(60/CONFIG.givenSeconds));
+  stats.accuracy = Math.round(stats.corrects/stats.keypresses * 10000)/100;
+  return stats;
+}
+
+function testDone() {
+  stats = calcStats(stats);
+  if (CONFIG.savePath) saveStats();
+  printStats();
+}
 
 const CONFIG = initConfig();
 if (CONFIG.verbose) printConfig(CONFIG);
@@ -169,7 +205,9 @@ let startTime;
 let stats = {
     corrects: 0,
     errors: 0,
-    keypresses: 0
+    keypresses: 0,
+    wpm: 0,
+    accuracy: 0
 }
 
 const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
@@ -182,7 +220,7 @@ let cursor = 0;
 
 stdin.on('data', key => {
     if (!started) {
-        setTimeout(printStats, CONFIG.givenSeconds * 1000);
+        setTimeout(testDone, CONFIG.givenSeconds * 1000);
         startTime = Date.now();
         started = true;
     }
@@ -222,7 +260,7 @@ stdin.on('data', key => {
         stats.keypresses++;
     }
 
-    // erease the whole thing and display the next words to type
+    // erase the whole thing and display the next words to type
     stdout.clearLine();
     stdout.moveCursor(0, -2);
     stdout.clearLine();

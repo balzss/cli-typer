@@ -1,4 +1,4 @@
-Practice touch typing in the commandline and measure your skills.  
+Practice touch typing in the commandline and measure your skills.
 Coauthored by [qwhex](https://github.com/qwhex).
 
 ![cli-typer demo gif](https://raw.githubusercontent.com/balzss/cli-typer/master/demo.gif)
@@ -18,6 +18,11 @@ cli-typer [options]
 - `-w, --words` Number of words to display per line
 - `-i, --input` Path to a wordlist file with new line separated words
 - `-V, --verbose` Show settings on start
+- `-s, --save` Path to file for saving results
+
+## Saving results
+
+When called with the `-s/--save` option, results will be written to a file at the given path. Results are appended to the end of a tab-separated file so you can track your progress over time.
 
 ## Wordlists
 
