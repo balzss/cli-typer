@@ -159,8 +159,6 @@ function* lineGenerator(path, k) {
 
 function saveStats() {
 
-  if (!CONFIG.savePath) return
-
   date = new Date(startTime).toLocaleString();
   headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
   content = `${date}\t${CONFIG.givenSeconds}\t${stats.wpm}\t${stats.keypresses}\t${stats.corrects}\t${stats.errors}\t${stats.accuracy}\t${CONFIG.inputFile}\n`
@@ -181,9 +179,16 @@ function saveStats() {
   fs.appendFileSync(CONFIG.savePath, data, (err) => {if (err) throw err});
 }
 
-function calcStats() {
+function calcStats(stats) {
   stats.wpm = Math.round(stats.corrects/5*(60/CONFIG.givenSeconds));
   stats.accuracy = Math.round(stats.corrects/stats.keypresses * 10000)/100;
+  return stats;
+}
+
+function testDone() {
+  stats = calcStats(stats);
+  if (CONFIG.savePath) saveStats();
+  printStats();
 }
 
 const CONFIG = initConfig();
@@ -215,9 +220,7 @@ let cursor = 0;
 
 stdin.on('data', key => {
     if (!started) {
-        setTimeout(calcStats, CONFIG.givenSeconds * 1000);
-        setTimeout(saveStats, CONFIG.givenSeconds * 1000);
-        setTimeout(printStats, CONFIG.givenSeconds * 1000);
+        setTimeout(testDone, CONFIG.givenSeconds * 1000);
         startTime = Date.now();
         started = true;
     }
