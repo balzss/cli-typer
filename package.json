@@ -26,11 +26,18 @@
       "email" : "balazs.saros@gmail.com",
       "url" : "https://github.com/balzss"
   },
-  "contributors": [{
-      "name" : "Mice Papai",
-      "email" : "qwhexz@gmail.com",
-      "url" : "https://qwhex.com"
-  }],
+  "contributors": [
+      {
+          "name" : "Mice Papai",
+          "email" : "qwhexz@gmail.com",
+          "url" : "https://qwhex.com"
+      },
+      {
+          "name" : "Brady Mitchell",
+          "email" : "bradym@users.noreply.github.com",
+          "url" : "https://github.com/bradym"
+      }
+  ],
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/balzss/cli-typer/issues"
