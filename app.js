@@ -233,6 +233,7 @@ let results = '';
 let wrote = '';
 let started = false;
 let startTime = Date.now();
+let boxDrawIsLocked = false;
 
 let STATS = {
     corrects: 0,
@@ -249,8 +250,6 @@ let nextText = lineGen.next().value;
 
 process.stdout.write(boxTop() + '\n' + boxText(text) + '\n' + boxText(nextText) + '\n' + boxSeparator() + '\n│ ');
 let cursor = 0;
-
-let boxDrawIsLocked = false;
 
 stdin.on('data', key => {
     if (!started) {
