@@ -57,7 +57,7 @@ function boxBottom(width=79) {
     return '╰' + ('─'.repeat(width-2)) + '╯';
 }
 
-function printStats() {
+function printStats(stats) {
     console.log('\n' + boxSeparator());
     console.log(boxText(`Time's up!`));
     console.log(boxText(`WPM: ${stats.wpm}`));
@@ -157,38 +157,41 @@ function* lineGenerator(path, k) {
     }
 }
 
-function saveStats() {
+function saveStats(stats, config) {
 
-  date = new Date(startTime).toLocaleString();
-  headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
-  content = `${date}\t${CONFIG.givenSeconds}\t${stats.wpm}\t${stats.keypresses}\t${stats.corrects}\t${stats.errors}\t${stats.accuracy}\t${CONFIG.inputFile}\n`
+    date = new Date(startTime).toLocaleString();
+    headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
+    content = `${date}\t${config.givenSeconds}\t${stats.wpm}\t${stats.keypresses}\t${stats.corrects}\t${stats.errors}\t${stats.accuracy}\t${config.inputFile}\n`
 
-  try {
-    fs.statSync(CONFIG.savePath).isFile()
-    // If the file exists, assume headers have already been written.
-    data = content;
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      // Since the file does not exist, write the headers as well.
-      data = headers + content;
-    } else {
-      throw e;
+    try {
+        fs.statSync(config.savePath).isFile()
+        // If the file exists, assume headers have already been written.
+        data = content;
+    } catch (e) {
+        if (e.code === 'ENOENT') {
+            // Since the file does not exist, write the headers as well.
+            data = headers + content;
+        } else {
+            throw e;
+        }
     }
-  }
 
-  fs.appendFileSync(CONFIG.savePath, data, (err) => {if (err) throw err});
+    fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
 }
 
-function calcStats(stats) {
-  stats.wpm = Math.round(stats.corrects/5*(60/CONFIG.givenSeconds));
-  stats.accuracy = Math.round(stats.corrects/stats.keypresses * 10000)/100;
-  return stats;
+function calcWPM(corrects, givenSeconds) {
+    return Math.round(corrects/5*(60/givenSeconds));
+}
+
+function calcAccuracy(corrects, keypresses) {
+    return Math.round(corrects/keypresses * 10000)/100;
 }
 
 function testDone() {
-  stats = calcStats(stats);
-  if (CONFIG.savePath) saveStats();
-  printStats();
+    STATS.wpm = calcWPM(STATS.corrects, CONFIG.givenSeconds);
+    STATS.accuracy = calcAccuracy(STATS.corrects, STATS.keypresses);
+    if (CONFIG.savePath) saveStats(STATS, CONFIG);
+    printStats(STATS);
 }
 
 const CONFIG = initConfig();
@@ -202,7 +205,7 @@ let wrote = '';
 let started = false;
 let startTime;
 
-let stats = {
+let STATS = {
     corrects: 0,
     errors: 0,
     keypresses: 0,
@@ -250,14 +253,14 @@ stdin.on('data', key => {
 
         if (key == text[cursor]) {
             results += SPECIAL.GREEN_BG;
-            stats.corrects++;
+            STATS.corrects++;
         } else {
             results += SPECIAL.RED_BG;
-            stats.errors++;
+            STATS.errors++;
         }
         results += text[cursor] + SPECIAL.RESET;
         cursor++;
-        stats.keypresses++;
+        STATS.keypresses++;
     }
 
     // erase the whole thing and display the next words to type
