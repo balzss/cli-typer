@@ -39,8 +39,19 @@ function removeAnsiEscape(text) {
     return text.replace(ANSI_ESCAPE, '');
 }
 
+function timePad(time) {
+    return ('00' + time).slice(-2);
+}
+
+function calcRemainingTime(){
+    let allSeconds = CONFIG.givenSeconds - Math.floor((Date.now() - startTime)/1000);
+    let minutes = Math.floor(allSeconds / 60);
+    let seconds = allSeconds % 60;
+    return timePad(minutes) + ':' + timePad(seconds);
+}
+
 function boxTop(width=79) {
-    return '╭' + ('─'.repeat(width-2)) + '╮';
+    return '╭' + ('─'.repeat(width-14)) + '┨ ' + calcRemainingTime() + ' ┠───╮';
 }
 
 function boxText(text, width=79) {
@@ -203,7 +214,7 @@ let results = '';
 // the lower text which shows what you typed
 let wrote = '';
 let started = false;
-let startTime;
+let startTime = Date.now();
 
 let STATS = {
     corrects: 0,
@@ -269,6 +280,8 @@ stdin.on('data', key => {
     stdout.clearLine();
     stdout.moveCursor(0, -1);
     stdout.clearLine();
+    stdout.moveCursor(0, -1);
+    stdout.clearLine();
     stdout.cursorTo(0);
-    stdout.write(boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
+    stdout.write(boxTop() + '\n' + boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
 });
