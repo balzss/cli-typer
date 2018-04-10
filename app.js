@@ -68,6 +68,24 @@ function boxBottom(width=79) {
     return '╰' + ('─'.repeat(width-2)) + '╯';
 }
 
+function drawBox() {
+    if (boxDrawIsLocked) return;
+    boxDrawIsLocked = true;
+
+    // erase the whole thing and display the next words to type
+    stdout.clearLine();
+    stdout.moveCursor(0, -2);
+    stdout.clearLine();
+    stdout.moveCursor(0, -1);
+    stdout.clearLine();
+    stdout.moveCursor(0, -1);
+    stdout.clearLine();
+    stdout.cursorTo(0);
+    stdout.write(boxTop() + '\n' + boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
+
+    boxDrawIsLocked = false;
+}
+
 function printStats(stats) {
     console.log('\n' + boxSeparator());
     console.log(boxText(`Time's up!`));
@@ -169,13 +187,13 @@ function* lineGenerator(path, k) {
 }
 
 function saveStats(stats, config) {
-
     date = new Date(startTime).toLocaleString();
     headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
-    content = `${date}\t${config.givenSeconds}\t${stats.wpm}\t${stats.keypresses}\t${stats.corrects}\t${stats.errors}\t${stats.accuracy}\t${config.inputFile}\n`
+    content = [date, config.givenSeconds, stats.wpm, stats.keypresses, stats.corrects,
+               stats.errors, stats.accuracy, config.inputFile].join('\t') + '\n';
 
     try {
-        fs.statSync(config.savePath).isFile()
+        fs.statSync(config.savePath).isFile();
         // If the file exists, assume headers have already been written.
         data = content;
     } catch (e) {
@@ -232,9 +250,12 @@ let nextText = lineGen.next().value;
 process.stdout.write(boxTop() + '\n' + boxText(text) + '\n' + boxText(nextText) + '\n' + boxSeparator() + '\n│ ');
 let cursor = 0;
 
+let boxDrawIsLocked = false;
+
 stdin.on('data', key => {
     if (!started) {
         setTimeout(testDone, CONFIG.givenSeconds * 1000);
+        setInterval(drawBox, 250);
         startTime = Date.now();
         started = true;
     }
@@ -274,14 +295,5 @@ stdin.on('data', key => {
         STATS.keypresses++;
     }
 
-    // erase the whole thing and display the next words to type
-    stdout.clearLine();
-    stdout.moveCursor(0, -2);
-    stdout.clearLine();
-    stdout.moveCursor(0, -1);
-    stdout.clearLine();
-    stdout.moveCursor(0, -1);
-    stdout.clearLine();
-    stdout.cursorTo(0);
-    stdout.write(boxTop() + '\n' + boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
+    drawBox();
 });
