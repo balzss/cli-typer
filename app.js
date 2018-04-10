@@ -125,7 +125,7 @@ function printConfig(config) {
 }
 
 function printInstructions() {
-    console.log(`\n ✅ Start typing the words below:\n`)
+    console.log(`\n  Start typing the words below:\n`)
 }
 
 function validateIntArg(flags, arg) {
