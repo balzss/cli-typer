@@ -44,7 +44,7 @@ function timePad(time) {
 }
 
 function calcRemainingTime(){
-    let allSeconds = CONFIG.givenSeconds - Math.floor((Date.now() - startTime)/1000);
+    let allSeconds = CONFIG.givenSeconds - Math.round((Date.now() - startTime)/1000);
     let minutes = Math.floor(allSeconds / 60);
     let seconds = allSeconds % 60;
     return timePad(minutes) + ':' + timePad(seconds);
