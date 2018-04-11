@@ -22,7 +22,7 @@ cli-typer [options]
 
 ## Saving results
 
-When called with the `-s/--save` option, results will be written to a file at the given path. Results are appended to the end of a tab-separated file so you can track your progress over time.
+When called with the `-s, --save` option, results will be written to a file at the given path. Results are appended to the end of a tab-separated file so you can track your progress over time.
 
 ## Wordlists
 
