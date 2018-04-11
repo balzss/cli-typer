@@ -14,6 +14,8 @@ if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
     process.exit();
 }
 
+const CONFIG = initConfig();
+
 const stdin = process.stdin;
 const stdout = process.stdout;
 
@@ -101,18 +103,18 @@ function drawBox() {
     boxDrawIsLocked = false;
 }
 
-function printStats(stats) {
+function printStats() {
     STATS.wpm = Math.round(STATS.corrects/5*(60/CONFIG.givenSeconds));
     STATS.accuracy = Math.round(STATS.corrects/STATS.keypresses * 10000)/100;
     if (CONFIG.savePath) saveStats(STATS, CONFIG);
 
     console.log('\n' + boxSeparator());
     console.log(boxText(`Time's up!`));
-    console.log(boxText(`WPM: ${stats.wpm}`));
-    console.log(boxText(`All keystrokes: ${stats.keypresses}`));
-    console.log(boxText(`Correct keystrokes: ${stats.corrects}`));
-    console.log(boxText(`Wrong keystrokes: ${stats.errors}`));
-    console.log(boxText(`Accuracy: ${stats.accuracy}%`));
+    console.log(boxText(`WPM: ${STATS.wpm}`));
+    console.log(boxText(`All keystrokes: ${STATS.keypresses}`));
+    console.log(boxText(`Correct keystrokes: ${STATS.corrects}`));
+    console.log(boxText(`Wrong keystrokes: ${STATS.errors}`));
+    console.log(boxText(`Accuracy: ${STATS.accuracy}%`));
     console.log(boxBottom());
     process.exit();
 }
@@ -228,7 +230,6 @@ function saveStats(stats, config) {
     fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
 }
 
-const CONFIG = initConfig();
 
 // the upper text which shows what to type
 let results = '';
@@ -251,7 +252,7 @@ init();
 
 stdin.on('data', key => {
     if (!started) {
-        setTimeout(testDone, CONFIG.givenSeconds * 1000);
+        setTimeout(printStats, CONFIG.givenSeconds * 1000);
         setInterval(drawBox, 250);
         startTime = Date.now();
         started = true;
