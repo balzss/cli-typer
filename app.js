@@ -97,7 +97,6 @@ function drawBox() {
     stdout.moveCursor(0, -1);
     stdout.clearLine();
     stdout.cursorTo(0);
-    // TODO close box everywhere
     stdout.write(boxTop() + '\n' + boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
 
     boxDrawIsLocked = false;
