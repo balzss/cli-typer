@@ -14,11 +14,13 @@ if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
     process.exit();
 }
 
+// TODO only import when 100% needed
 const fs = require('fs');
 
 const stdin = process.stdin;
 const stdout = process.stdout;
 
+// TODO move to init function
 stdin.setRawMode(true);
 stdin.resume();
 stdin.setEncoding('utf8');
@@ -50,6 +52,7 @@ function calcRemainingTime(){
     return timePad(minutes) + ':' + timePad(seconds);
 }
 
+// TODO maybe merge box functions to one
 function boxTop(width=79) {
     return '╭' + ('─'.repeat(width-14)) + '┨ ' + calcRemainingTime() + ' ┠───╮';
 }
@@ -81,6 +84,7 @@ function drawBox() {
     stdout.moveCursor(0, -1);
     stdout.clearLine();
     stdout.cursorTo(0);
+    // TODO close box everywhere
     stdout.write(boxTop() + '\n' + boxText(results + text.substring(cursor)) + '\n' + boxText(nextText) + '\n\n│ ' + wrote);
 
     boxDrawIsLocked = false;
@@ -124,6 +128,7 @@ function printConfig(config) {
     console.log(boxBottom());
 }
 
+// TODO do we need a function for this
 function printInstructions() {
     console.log(`\n  Start typing the words below:\n`)
 }
@@ -131,6 +136,7 @@ function printInstructions() {
 function validateIntArg(flags, arg) {
     const intArg = parseInt(arg, 10);
     if (isNaN(intArg)) {
+        // TODO better wording?
         console.log(`"${arg}"\nyou're stupid boi/gurl!!!\n`);
         return false;
     }
@@ -158,6 +164,7 @@ function argvParser(flags, dflt, validateFunction=false) {
     return dflt;
 }
 
+// TODO too verbose
 function random(min, max) {
     if (max == null) {
         max = min;
@@ -178,6 +185,7 @@ function shuffle(obj) {
     return sample.slice();
 }
 
+// TODO maybe import file reading functions here
 function* lineGenerator(path, k) {
     const words = fs.readFileSync(path, 'utf8').split('\n');
     const shuffledWords = shuffle(words);
@@ -186,6 +194,7 @@ function* lineGenerator(path, k) {
     }
 }
 
+// TODO tidy up; looks unconventional
 function saveStats(stats, config) {
     date = new Date(startTime).toLocaleString();
     headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
@@ -208,14 +217,17 @@ function saveStats(stats, config) {
     fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
 }
 
+// TODO don't put in separate function
 function calcWPM(corrects, givenSeconds) {
     return Math.round(corrects/5*(60/givenSeconds));
 }
 
+// TODO don't put in separate function
 function calcAccuracy(corrects, keypresses) {
     return Math.round(corrects/keypresses * 10000)/100;
 }
 
+// TODO don't put in separate function
 function testDone() {
     STATS.wpm = calcWPM(STATS.corrects, CONFIG.givenSeconds);
     STATS.accuracy = calcAccuracy(STATS.corrects, STATS.keypresses);
@@ -224,6 +236,8 @@ function testDone() {
 }
 
 const CONFIG = initConfig();
+
+// TODO put in init function
 if (CONFIG.verbose) printConfig(CONFIG);
 printInstructions();
 
@@ -235,6 +249,7 @@ let started = false;
 let startTime = Date.now();
 let boxDrawIsLocked = false;
 
+// TODO uppercase?
 let STATS = {
     corrects: 0,
     errors: 0,
@@ -248,6 +263,7 @@ const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 let text = lineGen.next().value;
 let nextText = lineGen.next().value;
 
+// TODO put it in init function
 process.stdout.write(boxTop() + '\n' + boxText(text) + '\n' + boxText(nextText) + '\n' + boxSeparator() + '\n│ ');
 let cursor = 0;
 
@@ -265,6 +281,7 @@ stdin.on('data', key => {
     } else if (key == SPECIAL.BACKSPACE) {
         // do nothing on the beginning of the line
         if (cursor == 0) return;
+        // TODO fix unfair statistic calculation
         wrote = wrote.slice(0, -1);
         // the last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
@@ -282,6 +299,7 @@ stdin.on('data', key => {
     } else {
         wrote += key;
 
+        // TODO maybe list instead of raw string
         if (key == text[cursor]) {
             results += SPECIAL.GREEN_BG;
             STATS.corrects++;
