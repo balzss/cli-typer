@@ -108,7 +108,7 @@ function printStats() {
     STATS.accuracy = Math.round(STATS.corrects/STATS.keypresses * 10000)/100;
     if (CONFIG.savePath) saveStats(STATS, CONFIG);
 
-    console.log('\n' + boxSeparator());
+    console.log(' '.repeat(79 - 3 - wrote.length) + '│\n' + boxSeparator());
     console.log(boxText(`Time's up!`));
     console.log(boxText(`WPM: ${STATS.wpm}`));
     console.log(boxText(`All keystrokes: ${STATS.keypresses}`));
@@ -144,7 +144,6 @@ function printConfig(config) {
     if (config.savePath !== false) console.log(boxText(`Save path: ${config.savePath}`))
     console.log(boxBottom());
 }
-
 
 function validateIntArg(flags, arg) {
     const intArg = parseInt(arg, 10);
@@ -297,4 +296,3 @@ stdin.on('data', key => {
 
     drawBox();
 });
-
