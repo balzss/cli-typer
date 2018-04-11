@@ -14,16 +14,8 @@ if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
     process.exit();
 }
 
-// TODO only import when 100% needed
-const fs = require('fs');
-
 const stdin = process.stdin;
 const stdout = process.stdout;
-
-// TODO move to init function
-stdin.setRawMode(true);
-stdin.resume();
-stdin.setEncoding('utf8');
 
 const SPECIAL = {
     CTRL_C: '\u0003',
@@ -36,6 +28,25 @@ const SPECIAL = {
 
 const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
 const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+
+const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
+
+let text, nextText, cursor;
+
+function init(){
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.setEncoding('utf8');
+
+    if (CONFIG.verbose) printConfig(CONFIG);
+    console.log(`\n  Start typing the words below:\n`)
+
+    text = lineGen.next().value;
+    nextText = lineGen.next().value;
+
+    process.stdout.write(boxTop() + '\n' + boxText(text) + '\n' + boxText(nextText) + '\n' + boxSeparator() + '\n│ ');
+    cursor = 0;
+}
 
 function removeAnsiEscape(text) {
     return text.replace(ANSI_ESCAPE, '');
@@ -91,6 +102,10 @@ function drawBox() {
 }
 
 function printStats(stats) {
+    STATS.wpm = Math.round(STATS.corrects/5*(60/CONFIG.givenSeconds));
+    STATS.accuracy = Math.round(STATS.corrects/STATS.keypresses * 10000)/100;
+    if (CONFIG.savePath) saveStats(STATS, CONFIG);
+
     console.log('\n' + boxSeparator());
     console.log(boxText(`Time's up!`));
     console.log(boxText(`WPM: ${stats.wpm}`));
@@ -128,10 +143,6 @@ function printConfig(config) {
     console.log(boxBottom());
 }
 
-// TODO do we need a function for this
-function printInstructions() {
-    console.log(`\n  Start typing the words below:\n`)
-}
 
 function validateIntArg(flags, arg) {
     const intArg = parseInt(arg, 10);
@@ -185,8 +196,8 @@ function shuffle(obj) {
     return sample.slice();
 }
 
-// TODO maybe import file reading functions here
 function* lineGenerator(path, k) {
+    const fs = require('fs');
     const words = fs.readFileSync(path, 'utf8').split('\n');
     const shuffledWords = shuffle(words);
     for (let i = 0; i+k < shuffledWords.length-1; i += k) {
@@ -217,29 +228,7 @@ function saveStats(stats, config) {
     fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
 }
 
-// TODO don't put in separate function
-function calcWPM(corrects, givenSeconds) {
-    return Math.round(corrects/5*(60/givenSeconds));
-}
-
-// TODO don't put in separate function
-function calcAccuracy(corrects, keypresses) {
-    return Math.round(corrects/keypresses * 10000)/100;
-}
-
-// TODO don't put in separate function
-function testDone() {
-    STATS.wpm = calcWPM(STATS.corrects, CONFIG.givenSeconds);
-    STATS.accuracy = calcAccuracy(STATS.corrects, STATS.keypresses);
-    if (CONFIG.savePath) saveStats(STATS, CONFIG);
-    printStats(STATS);
-}
-
 const CONFIG = initConfig();
-
-// TODO put in init function
-if (CONFIG.verbose) printConfig(CONFIG);
-printInstructions();
 
 // the upper text which shows what to type
 let results = '';
@@ -258,14 +247,7 @@ let STATS = {
     accuracy: 0
 }
 
-const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
-
-let text = lineGen.next().value;
-let nextText = lineGen.next().value;
-
-// TODO put it in init function
-process.stdout.write(boxTop() + '\n' + boxText(text) + '\n' + boxText(nextText) + '\n' + boxSeparator() + '\n│ ');
-let cursor = 0;
+init();
 
 stdin.on('data', key => {
     if (!started) {
@@ -314,3 +296,4 @@ stdin.on('data', key => {
 
     drawBox();
 });
+
