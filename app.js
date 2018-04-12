@@ -231,6 +231,7 @@ function saveStats(stats, config) {
 
 // the upper text which shows what to type
 let results = '';
+let interResults = '';
 // the lower text which shows what you typed
 let wrote = '';
 let started = false;
@@ -262,8 +263,17 @@ stdin.on('data', key => {
     } else if (key == SPECIAL.BACKSPACE) {
         // do nothing on the beginning of the line
         if (cursor == 0) return;
-        // TODO fix unfair statistic calculation
+
+        // remove error from stats for a more fair calculation
+        if(interResults.slice(-1) == 'x'){
+            STATS.errors--;
+        } else {
+            STATS.corrects--;
+        }
+        STATS.keypresses--;
+
         wrote = wrote.slice(0, -1);
+        interResults = interResults.slice(0, -1);
         // the last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
         cursor--;
@@ -282,9 +292,11 @@ stdin.on('data', key => {
 
         // TODO maybe list instead of raw string
         if (key == text[cursor]) {
+            interResults += 'o';
             results += SPECIAL.GREEN_BG;
             STATS.corrects++;
         } else {
+            interResults += 'x';
             results += SPECIAL.RED_BG;
             STATS.errors++;
         }
