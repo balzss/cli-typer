@@ -147,8 +147,7 @@ function printConfig(config) {
 function validateIntArg(flags, arg) {
     const intArg = parseInt(arg, 10);
     if (isNaN(intArg)) {
-        // TODO better wording?
-        console.log(`"${arg}"\nyou're stupid boi/gurl!!!\n`);
+        console.log(`"${arg}"\nArg is incorrect.\n`);
         return false;
     }
     if (intArg < 1) {
@@ -290,7 +289,6 @@ stdin.on('data', key => {
     } else {
         wrote += key;
 
-        // TODO maybe list instead of raw string
         if (key == text[cursor]) {
             interResults += 'o';
             results += SPECIAL.GREEN_BG;
