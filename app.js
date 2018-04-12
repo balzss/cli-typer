@@ -147,7 +147,7 @@ function printConfig(config) {
 function validateIntArg(flags, arg) {
     const intArg = parseInt(arg, 10);
     if (isNaN(intArg)) {
-        console.log(`"${arg}"\nArg is incorrect.\n`);
+        console.log(`"${arg}"\n${flags.join(', ')} arg should be a whole number.\n`);
         return false;
     }
     if (intArg < 1) {
@@ -174,7 +174,6 @@ function argvParser(flags, dflt, validateFunction=false) {
     return dflt;
 }
 
-// TODO too verbose
 function random(min, max) {
     if (max == null) {
         max = min;
@@ -204,7 +203,7 @@ function* lineGenerator(path, k) {
     }
 }
 
-// TODO tidy up; looks unconventional
+// TODO tidy up
 function saveStats(stats, config) {
     date = new Date(startTime).toLocaleString();
     headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
@@ -237,7 +236,7 @@ let started = false;
 let startTime = Date.now();
 let boxDrawIsLocked = false;
 
-// TODO uppercase?
+// TODO explicit code / variable name standards
 let STATS = {
     corrects: 0,
     errors: 0,
