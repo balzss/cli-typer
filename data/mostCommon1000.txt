@@ -972,7 +972,7 @@ proper
 bar
 offer
 segment
-slave
+focus
 duck
 instant
 market
