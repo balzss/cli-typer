@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "9"
+  - "8"
+  - "7"
+  - "6"
+sudo: enabled
+install: true  # disable install
+notifications:
+  email:
+    recipients:
+      - qwhexz@gmail.com
+      - balazs.saros@gmail.com
+    on_success: never
+    on_failure: always
