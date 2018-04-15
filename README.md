@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/qwhex/cli-typer.svg?branch=master)](https://travis-ci.org/qwhex/cli-typer)
+
 Practice touch typing in the commandline and measure your skills.
 Coauthored by [qwhex](https://github.com/qwhex).
 
