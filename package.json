@@ -8,7 +8,7 @@
     "node" : ">=6.4.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node app.js -d -t 1"
   },
   "bin": {
       "cli-typer": "./app.js"

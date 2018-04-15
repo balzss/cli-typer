@@ -124,6 +124,7 @@ function initConfig() {
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt'),
         verbose: process.argv.indexOf('-V') != process.argv.indexOf('--verbose'),
+        debug: process.argv.indexOf('-d') != process.argv.indexOf('--debug'),
         savePath: argvParser(['-s', '--save'], false)
     }
 }
@@ -226,6 +227,13 @@ function saveStats(stats, config) {
     fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
 }
 
+function start() {
+    setTimeout(printStats, CONFIG.givenSeconds * 1000);
+    setInterval(drawBox, 250);
+    startTime = Date.now();
+    started = true;
+}
+
 
 // the upper text which shows what to type
 let results = '';
@@ -247,12 +255,14 @@ let STATS = {
 
 init();
 
+// skip waiting for the first char on debug
+if (CONFIG.debug) {
+    start();
+}
+
 stdin.on('data', key => {
     if (!started) {
-        setTimeout(printStats, CONFIG.givenSeconds * 1000);
-        setInterval(drawBox, 250);
-        startTime = Date.now();
-        started = true;
+        start();
     }
 
     // exit on ctrl-c
