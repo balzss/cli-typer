@@ -19,6 +19,12 @@ const CONFIG = initConfig();
 const stdin = process.stdin;
 const stdout = process.stdout;
 
+const clearCli = () => {
+	stdout.write('\033c');
+}
+
+clearCli();
+
 const SPECIAL = {
     CTRL_C: '\u0003',
     BACKSPACE: '\u007f',
