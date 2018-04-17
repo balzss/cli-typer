@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "description": "Practice touch typing in the commandline and measure your skills",
   "main": "app.js",
-  "engineStrict" : true,
-  "engines" : {
-    "node" : ">=6.4.0"
+  "engineStrict": true,
+  "engines": {
+    "node": ">=6.4.0"
   },
   "scripts": {
-    "test": "node app.js -d -t 1"
+    "test": "node app.js -d -t 1",
+    "lint": "./node_modules/.bin/eslint . ./**/*.js"
   },
   "bin": {
-      "cli-typer": "./app.js"
+    "cli-typer": "./app.js"
   },
   "repository": {
     "type": "git",
@@ -22,25 +23,28 @@
     "touch-type"
   ],
   "author": {
-      "name" : "Balazs Saros",
-      "email" : "balazs.saros@gmail.com",
-      "url" : "https://github.com/balzss"
+    "name": "Balazs Saros",
+    "email": "balazs.saros@gmail.com",
+    "url": "https://github.com/balzss"
   },
   "contributors": [
-      {
-          "name" : "Mice Papai",
-          "email" : "qwhexz@gmail.com",
-          "url" : "https://qwhex.com"
-      },
-      {
-          "name" : "Brady Mitchell",
-          "email" : "bradym@users.noreply.github.com",
-          "url" : "https://github.com/bradym"
-      }
+    {
+      "name": "Mice Papai",
+      "email": "qwhexz@gmail.com",
+      "url": "https://qwhex.com"
+    },
+    {
+      "name": "Brady Mitchell",
+      "email": "bradym@users.noreply.github.com",
+      "url": "https://github.com/bradym"
+    }
   ],
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/balzss/cli-typer/issues"
   },
-  "homepage": "https://github.com/balzss/cli-typer#readme"
+  "homepage": "https://github.com/balzss/cli-typer#readme",
+  "devDependencies": {
+    "eslint": "^4.19.1"
+  }
 }
