@@ -18,6 +18,7 @@ const CONFIG = initConfig();
 
 const stdin = process.stdin;
 const stdout = process.stdout;
+const fs = require('fs');
 
 const SPECIAL = {
     CTRL_C: '\u0003',
@@ -26,10 +27,10 @@ const SPECIAL = {
     RED_BG: '\x1b[41m',
     GREEN_TEXT: '\x1b[32m',
     RESET: '\x1b[0m'
-}
+};
 
 const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
-const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
 
 const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 
@@ -41,7 +42,7 @@ function init(){
     stdin.setEncoding('utf8');
 
     if (CONFIG.verbose) printConfig(CONFIG);
-    console.log(`\n  Start typing the words below:\n`)
+    console.log('\n  Start typing the words below:\n');
 
     text = lineGen.next().value;
     nextText = lineGen.next().value;
@@ -108,7 +109,7 @@ function printStats() {
     if (CONFIG.savePath) saveStats(STATS, CONFIG);
 
     console.log(' '.repeat(79 - 3 - wrote.length) + '│\n' + boxSeparator());
-    console.log(boxText(`Time's up!`));
+    console.log(boxText('Time\'s up!'));
     console.log(boxText(`WPM: ${STATS.wpm}`));
     console.log(boxText(`All keystrokes: ${STATS.keypresses}`));
     console.log(boxText(`Correct keystrokes: ${STATS.corrects}`));
@@ -126,7 +127,7 @@ function initConfig() {
         verbose: process.argv.indexOf('-V') != process.argv.indexOf('--verbose'),
         debug: process.argv.indexOf('-d') != process.argv.indexOf('--debug'),
         savePath: argvParser(['-s', '--save'], false)
-    }
+    };
 }
 
 function plural(n, noun) {
@@ -141,7 +142,7 @@ function printConfig(config) {
     console.log(boxText(plural(config.givenSeconds, 'second')));
     console.log(boxText(`${plural(config.wordsPerLine, 'word')} per line`));
     console.log(boxText(`Input: ${config.inputFile}`));
-    if (config.savePath !== false) console.log(boxText(`Save path: ${config.savePath}`))
+    if (config.savePath !== false) console.log(boxText(`Save path: ${config.savePath}`));
     console.log(boxBottom());
 }
 
@@ -152,14 +153,14 @@ function validateIntArg(flags, arg) {
         return false;
     }
     if (intArg < 1) {
-        console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`)
+        console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`);
         return false;
     }
     return intArg;
 }
 
 function argvParser(flags, dflt, validateFunction=false) {
-    for (flag of flags) {
+    for (let flag of flags) {
         if (process.argv.indexOf(flag) != -1) {
             const param = process.argv[process.argv.indexOf(flag) + 1];
             if (!validateFunction) {
@@ -196,7 +197,6 @@ function shuffle(obj) {
 }
 
 function* lineGenerator(path, k) {
-    const fs = require('fs');
     const words = fs.readFileSync(path, 'utf8').split('\n');
     const shuffledWords = shuffle(words);
     for (let i = 0; i+k < shuffledWords.length-1; i += k) {
@@ -206,25 +206,26 @@ function* lineGenerator(path, k) {
 
 // TODO tidy up
 function saveStats(stats, config) {
-    date = new Date(startTime).toLocaleString();
-    headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
-    content = [date, config.givenSeconds, stats.wpm, stats.keypresses, stats.corrects,
-               stats.errors, stats.accuracy, config.inputFile].join('\t') + '\n';
+    const date = new Date(startTime).toLocaleString();
+    const headers = 'Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n';
+    const content = [date, config.givenSeconds, stats.wpm, stats.keypresses, stats.corrects,
+        stats.errors, stats.accuracy, config.inputFile].join('\t') + '\n';
 
+    let data;
     try {
         fs.statSync(config.savePath).isFile();
-        // If the file exists, assume headers have already been written.
+        // If the file exists, assume headers have already been written
         data = content;
     } catch (e) {
         if (e.code === 'ENOENT') {
-            // Since the file does not exist, write the headers as well.
+            // Since the file does not exist, write the headers as well
             data = headers + content;
         } else {
             throw e;
         }
     }
 
-    fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
+    fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err;});
 }
 
 function start() {
@@ -251,7 +252,7 @@ let STATS = {
     keypresses: 0,
     wpm: 0,
     accuracy: 0
-}
+};
 
 init();
 
