@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// show help if at least one of these flags are present
-if (process.argv.indexOf('-h') != process.argv.indexOf('--help')) {
+// Show help if at least one of these flags are present
+if (process.argv.indexOf('-h') !== process.argv.indexOf('--help')) {
     console.log('Usage:');
     console.log('  cli-typer [options]');
     console.log('\nOptions:');
@@ -18,6 +18,7 @@ const CONFIG = initConfig();
 
 const stdin = process.stdin;
 const stdout = process.stdout;
+const fs = require('fs');
 
 const SPECIAL = {
     CTRL_C: '\u0003',
@@ -26,10 +27,10 @@ const SPECIAL = {
     RED_BG: '\x1b[41m',
     GREEN_TEXT: '\x1b[32m',
     RESET: '\x1b[0m'
-}
+};
 
 const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
-const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
 
 const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
 
@@ -40,8 +41,10 @@ function init(){
     stdin.resume();
     stdin.setEncoding('utf8');
 
-    if (CONFIG.verbose) printConfig(CONFIG);
-    console.log(`\n  Start typing the words below:\n`)
+    if (CONFIG.verbose) {
+        printConfig(CONFIG);
+    }
+    console.log('\n  Start typing the words below:\n');
 
     text = lineGen.next().value;
     nextText = lineGen.next().value;
@@ -67,28 +70,32 @@ function calcRemainingTime(){
 
 // TODO maybe merge box functions to one
 function boxTop(width=79) {
-    return '╭' + ('─'.repeat(width-14)) + '┨ ' + calcRemainingTime() + ' ┠───╮';
+    return '╭' + '─'.repeat(width-14) + '┨ ' + calcRemainingTime() + ' ┠───╮';
 }
 
 function boxText(text, width=79) {
     const spaceAvailable = width-4-removeAnsiEscape(text).length;
-    if (spaceAvailable < 0) return '│ ' + text;
+    if (spaceAvailable < 0) {
+        return '│ ' + text;
+    }
     return '│ ' + text + ' '.repeat(spaceAvailable) + ' │';
 }
 
 function boxSeparator(width=79) {
-    return '├' + ('─'.repeat(width-2)) + '┤';
+    return '├' + '─'.repeat(width-2) + '┤';
 }
 
 function boxBottom(width=79) {
-    return '╰' + ('─'.repeat(width-2)) + '╯';
+    return '╰' + '─'.repeat(width-2) + '╯';
 }
 
 function drawBox() {
-    if (boxDrawIsLocked) return;
+    if (boxDrawIsLocked) {
+        return;
+    }
     boxDrawIsLocked = true;
 
-    // erase the whole thing and display the next words to type
+    // Erase the whole thing and display the next words to type
     stdout.clearLine();
     stdout.moveCursor(0, -2);
     stdout.clearLine();
@@ -105,10 +112,12 @@ function drawBox() {
 function printStats() {
     STATS.wpm = Math.round(STATS.corrects/5*(60/CONFIG.givenSeconds));
     STATS.accuracy = Math.round(STATS.corrects/STATS.keypresses * 10000)/100;
-    if (CONFIG.savePath) saveStats(STATS, CONFIG);
+    if (CONFIG.savePath) {
+        saveStats(STATS, CONFIG);
+    }
 
     console.log(' '.repeat(79 - 3 - wrote.length) + '│\n' + boxSeparator());
-    console.log(boxText(`Time's up!`));
+    console.log(boxText('Time\'s up!'));
     console.log(boxText(`WPM: ${STATS.wpm}`));
     console.log(boxText(`All keystrokes: ${STATS.keypresses}`));
     console.log(boxText(`Correct keystrokes: ${STATS.corrects}`));
@@ -123,15 +132,15 @@ function initConfig() {
         wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt'),
-        verbose: process.argv.indexOf('-V') != process.argv.indexOf('--verbose'),
-        debug: process.argv.indexOf('-d') != process.argv.indexOf('--debug'),
+        verbose: process.argv.indexOf('-V') !== process.argv.indexOf('--verbose'),
+        debug: process.argv.indexOf('-d') !== process.argv.indexOf('--debug'),
         savePath: argvParser(['-s', '--save'], false)
-    }
+    };
 }
 
-function plural(n, noun) {
-    const output = `${n} ${noun}`;
-    return n !== 1 ? output + 's' : output;
+function plural(times, noun) {
+    const output = `${times} ${noun}`;
+    return times !== 1 ? output + 's' : output;
 }
 
 function printConfig(config) {
@@ -141,7 +150,9 @@ function printConfig(config) {
     console.log(boxText(plural(config.givenSeconds, 'second')));
     console.log(boxText(`${plural(config.wordsPerLine, 'word')} per line`));
     console.log(boxText(`Input: ${config.inputFile}`));
-    if (config.savePath !== false) console.log(boxText(`Save path: ${config.savePath}`))
+    if (config.savePath !== false) {
+        console.log(boxText(`Save path: ${config.savePath}`));
+    }
     console.log(boxBottom());
 }
 
@@ -152,15 +163,15 @@ function validateIntArg(flags, arg) {
         return false;
     }
     if (intArg < 1) {
-        console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`)
+        console.log(`${flags.join(', ')} must be higher than 0. Set to default.\n`);
         return false;
     }
     return intArg;
 }
 
 function argvParser(flags, dflt, validateFunction=false) {
-    for (flag of flags) {
-        if (process.argv.indexOf(flag) != -1) {
+    for (let flag of flags) {
+        if (process.argv.indexOf(flag) !== -1) {
             const param = process.argv[process.argv.indexOf(flag) + 1];
             if (!validateFunction) {
                 return param;
@@ -176,7 +187,7 @@ function argvParser(flags, dflt, validateFunction=false) {
 }
 
 function random(min, max) {
-    if (max == null) {
+    if (max === null) {
         max = min;
         min = 0;
     }
@@ -195,36 +206,40 @@ function shuffle(obj) {
     return sample.slice();
 }
 
-function* lineGenerator(path, k) {
-    const fs = require('fs');
+function *lineGenerator(path, numberOfWords) {
     const words = fs.readFileSync(path, 'utf8').split('\n');
     const shuffledWords = shuffle(words);
-    for (let i = 0; i+k < shuffledWords.length-1; i += k) {
-        yield shuffledWords.slice(i, i + k).join(' ');
+    for (let i = 0; i+numberOfWords < shuffledWords.length-1; i += numberOfWords) {
+        yield shuffledWords.slice(i, i + numberOfWords).join(' ');
     }
 }
 
 // TODO tidy up
 function saveStats(stats, config) {
-    date = new Date(startTime).toLocaleString();
-    headers = "Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n"
-    content = [date, config.givenSeconds, stats.wpm, stats.keypresses, stats.corrects,
-               stats.errors, stats.accuracy, config.inputFile].join('\t') + '\n';
+    const date = new Date(startTime).toLocaleString();
+    const headers = 'Date\tLength (seconds)\tWPM\tKeystrokes\tCorrect\tWrong\tAccuracy\tInput\n';
+    const content = [date, config.givenSeconds, stats.wpm, stats.keypresses, stats.corrects,
+        stats.errors, stats.accuracy, config.inputFile].join('\t') + '\n';
 
+    let data;
     try {
         fs.statSync(config.savePath).isFile();
-        // If the file exists, assume headers have already been written.
+        // If the file exists, assume headers have already been written
         data = content;
-    } catch (e) {
-        if (e.code === 'ENOENT') {
-            // Since the file does not exist, write the headers as well.
+    } catch (exception) {
+        if (exception.code === 'ENOENT') {
+            // Since the file does not exist, write the headers as well
             data = headers + content;
         } else {
-            throw e;
+            throw exception;
         }
     }
 
-    fs.appendFileSync(config.savePath, data, (err) => {if (err) throw err});
+    fs.appendFileSync(config.savePath, data, err => {
+        if (err) {
+            throw err;
+        }
+    });
 }
 
 function start() {
@@ -235,10 +250,10 @@ function start() {
 }
 
 
-// the upper text which shows what to type
+// The upper text which shows what to type
 let results = '';
 let interResults = '';
-// the lower text which shows what you typed
+// The lower text which shows what you typed
 let wrote = '';
 let started = false;
 let startTime = Date.now();
@@ -251,11 +266,11 @@ let STATS = {
     keypresses: 0,
     wpm: 0,
     accuracy: 0
-}
+};
 
 init();
 
-// skip waiting for the first char on debug
+// Skip waiting for the first char on debug
 if (CONFIG.debug) {
     start();
 }
@@ -265,15 +280,15 @@ stdin.on('data', key => {
         start();
     }
 
-    // exit on ctrl-c
-    if (key == SPECIAL.CTRL_C) {
+    // Exit on ctrl-c
+    if (key === SPECIAL.CTRL_C) {
         process.exit();
-    } else if (key == SPECIAL.BACKSPACE) {
-        // do nothing on the beginning of the line
-        if (cursor == 0) return;
+    } else if (key === SPECIAL.BACKSPACE) {
+        // Do nothing on the beginning of the line
+        if (cursor === 0) {return;}
 
-        // remove error from stats for a more fair calculation
-        if(interResults.slice(-1) == 'x'){
+        // Remove error from stats for a more fair calculation
+        if (interResults.slice(-1) === 'x'){
             STATS.errors--;
         } else {
             STATS.corrects--;
@@ -282,7 +297,7 @@ stdin.on('data', key => {
 
         wrote = wrote.slice(0, -1);
         interResults = interResults.slice(0, -1);
-        // the last char with the colored background takes up 10 characters
+        // The last char with the colored background takes up 10 characters
         results = results.slice(0, -10);
         cursor--;
     } else if (cursor >= text.length) {
@@ -292,13 +307,13 @@ stdin.on('data', key => {
         wrote = '';
         results = '';
     } else if (!ALPHANUMERIC.test(key)) {
-        // return on non-alphanumeric unicode characters
-        // regex generated with: http://kourge.net/projects/regexp-unicode-block
+        // Return on non-alphanumeric unicode characters
+        // Regex generated with: http://kourge.net/projects/regexp-unicode-block
         return;
     } else {
         wrote += key;
 
-        if (key == text[cursor]) {
+        if (key === text[cursor]) {
             interResults += 'o';
             results += SPECIAL.GREEN_BG;
             STATS.corrects++;
