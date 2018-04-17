@@ -20,8 +20,10 @@ const stdin = process.stdin;
 const stdout = process.stdout;
 
 const clearCli = () => {
-	stdout.write('\x1B[2J');
+	stdout.write('\033c');
 }
+
+clearCli();
 
 const SPECIAL = {
     CTRL_C: '\u0003',
@@ -232,7 +234,6 @@ function saveStats(stats, config) {
 }
 
 function start() {
-	clearCli();
     setTimeout(printStats, CONFIG.givenSeconds * 1000);
     setInterval(drawBox, 250);
     startTime = Date.now();
