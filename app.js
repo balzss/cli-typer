@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
+function flagExists(shortFlag, longFlag) {
+    return process.argv.indexOf(`-${shortFlag}`) !== process.argv.indexOf(`--${longFlag}`);
+}
+
 // Show help if at least one of these flags are present
-if (process.argv.indexOf('-h') !== process.argv.indexOf('--help')) {
+if (flagExists('h', 'help')) {
     console.log('Usage:');
     console.log('  cli-typer [options]');
     console.log('\nOptions:');
@@ -132,8 +136,8 @@ function initConfig() {
         wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt'),
-        verbose: process.argv.indexOf('-V') !== process.argv.indexOf('--verbose'),
-        debug: process.argv.indexOf('-d') !== process.argv.indexOf('--debug'),
+        verbose: flagExists('V', 'verbose'),
+        debug: flagExists('d', 'debug'),
         savePath: argvParser(['-s', '--save'], false)
     };
 }
