@@ -11,7 +11,8 @@ if (flagExists('h', 'help')) {
     console.log('\nOptions:');
     console.log('  -t, --time\t\tGiven time in seconds to complete the test');
     console.log('  -w, --words\t\tNumber of words to display per line');
-    console.log('  -i, --input\t\tPath to a wordlist file with new line separated words');
+    console.log('  -i, --input\t\tPath to a wordlist file with new line separated words, or a plain text file.');
+    console.log('  -m, --input-mode\t\tEither "wordlist" (default) or "text".');
     console.log('  -V, --verbose\t\tShow settings on start');
     console.log('  -s, --save\t\tPath to file for saving results');
     console.log('  -h, --help\t\tShow help');
@@ -36,7 +37,7 @@ const SPECIAL = {
 const ALPHANUMERIC = /[\u0000-\u007F\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F]/u;
 const ANSI_ESCAPE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
 
-const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
+const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.inputMode, CONFIG.wordsPerLine);
 
 let text, nextText, cursor;
 
@@ -136,6 +137,7 @@ function initConfig() {
         wordsPerLine: argvParser(['-w', '--words'], 9, validateIntArg),
         givenSeconds: argvParser(['-t', '--time'], 60, validateIntArg),
         inputFile: argvParser(['-i', '--input'], __dirname + '/data/mostCommon1000.txt'),
+        inputMode: argvParser(['-m', '--input-mode'], 'wordlist'),
         verbose: flagExists('V', 'verbose'),
         debug: flagExists('d', 'debug'),
         savePath: argvParser(['-s', '--save'], false)
@@ -210,11 +212,27 @@ function shuffle(obj) {
     return sample.slice();
 }
 
-function *lineGenerator(path, numberOfWords) {
-    const words = fs.readFileSync(path, 'utf8').split('\n');
+function *lineGenerator(path, mode, numberOfWords) {
+    const lines = fs.readFileSync(path, 'utf8').split('\n');
+
+    yield* (
+        mode === 'wordlist'
+            ? wlistLineGenerator(lines, numberOfWords)
+            : textLineGenerator(lines)
+    );
+}
+
+function *wlistLineGenerator(words, numberOfWords) {
     const shuffledWords = shuffle(words);
+
     for (let i = 0; i+numberOfWords < shuffledWords.length-1; i += numberOfWords) {
         yield shuffledWords.slice(i, i + numberOfWords).join(' ');
+    }
+}
+
+function *textLineGenerator(lines) {
+    for (let i = 0, len = lines.length; i < len; ++i) {
+        yield lines[i];
     }
 }
 
