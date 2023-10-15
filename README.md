@@ -14,16 +14,18 @@ npm install -g balzss/cli-typer
 
 ##### manually
 ```
-git clone https://github.com/balzss/cli-typer.git
-cd cli-typer
+git clone https://github.com/GLUD/cli-learn-typing.git
+cd cli-learn-typing
+npm install
+npm build
 npm install -g .  # optional
-node app.js
+node dist/index.js
 ```
 
 ## Dependecies
 
 - [node.js](https://github.com/nodejs/node) >= 6.4.0
-- ... That's it!
+- Typescript
 
 ## Usage
 ```
