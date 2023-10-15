@@ -1,18 +1,21 @@
 {
-  "name": "cli-typer",
-  "version": "1.0.0",
-  "description": "Practice touch typing in the commandline and measure your skills",
-  "main": "app.js",
+  "name": "cli-learn-typing",
+  "version": "1.0.1",
+  "description": "Learn touch typing in the commandline and measure your skills",
+  "main": "dist/index.js",
   "engineStrict": true,
   "engines": {
     "node": ">=6.4.0"
   },
   "scripts": {
-    "test": "node app.js -d -t 1",
+    "build": "npx tsc",
+    "dev": "npx tsc --watch",
+    "start": "node dist/index.js",
+    "test": "node dist/index.js -t 1 -l es",
     "lint": "./node_modules/.bin/eslint . ./**/*.js"
   },
   "bin": {
-    "cli-typer": "./app.js"
+    "cli-learn-typing": "./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +23,8 @@
   },
   "keywords": [
     "typing",
-    "touch-type"
+    "touch-type",
+    "learn"
   ],
   "author": {
     "name": "Balazs Saros",
@@ -37,6 +41,11 @@
       "name": "Brady Mitchell",
       "email": "bradym@users.noreply.github.com",
       "url": "https://github.com/bradym"
+    },
+    {
+      "name": "Felipe Martin",
+      "email": "felipemartinrod@gmail.com",
+      "url": "https://github.com/felimarod"
     }
   ],
   "license": "GPL-3.0",
@@ -45,6 +54,8 @@
   },
   "homepage": "https://github.com/balzss/cli-typer#readme",
   "devDependencies": {
-    "eslint": "^4.19.1"
+    "@types/node": "^20.8.6",
+    "eslint": "^8.51.0",
+    "typescript": "^5.2.2"
   }
 }

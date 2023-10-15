@@ -14,16 +14,18 @@ npm install -g balzss/cli-typer
 
 ##### manually
 ```
-git clone https://github.com/balzss/cli-typer.git
-cd cli-typer
+git clone https://github.com/GLUD/cli-learn-typing.git
+cd cli-learn-typing
+npm install
+npm build
 npm install -g .  # optional
-node app.js
+node dist/index.js
 ```
 
 ## Dependecies
 
 - [node.js](https://github.com/nodejs/node) >= 6.4.0
-- ... That's it!
+- Typescript
 
 ## Usage
 ```
@@ -33,6 +35,7 @@ cli-typer [options]
 ##### Options:
 - `-h, --help` Show help
 - `-t, --time` Given time in seconds to complete the test
+- `-l, --lang` Give words to practice in 'en' or 'es'
 - `-w, --words` Number of words to display per line
 - `-i, --input` Path to a wordlist file with new line separated words
 - `-V, --verbose` Show settings on start
