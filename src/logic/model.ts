@@ -1,4 +1,4 @@
-import {stdin, stdout} from "node:process";
+import { stdin, stdout } from "node:process";
 import {
   boxSeparator,
   boxText,
@@ -7,14 +7,16 @@ import {
   printConfig,
   printStats,
   setStartTime,
+  setMessages
 } from "../presentation/view";
-import {getConfig} from "./argParser";
-import {ALPHANUMERIC, SPECIAL} from "./consts";
-import {lineGenerator} from "./generator";
-import {conf, stats} from "./types";
+import { getConfig } from "./argParser";
+import { ALPHANUMERIC, SPECIAL } from "./consts";
+import { lineGenerator } from "./generator";
+import { conf, stats } from "./types";
+import { fileToJSON } from "../persistence/reader";
 
 const CONFIG: conf = getConfig();
-const lineGen = lineGenerator(CONFIG.inputFile, CONFIG.wordsPerLine);
+const lineGen = lineGenerator(CONFIG);
 let text: string, nextText: string, cursor: number;
 let started: boolean;
 
@@ -30,9 +32,11 @@ let interResults = "";
 let wrote = "";
 // The upper text which shows what to type
 let results = "";
+let messages = fileToJSON(`${__dirname}/../../messages.json`)[CONFIG.language];
 
 function init() {
   setStartTime(Date.now());
+  setMessages(messages);
   stdin.setRawMode(true);
   stdin.resume();
   stdin.setEncoding("utf8");
@@ -40,7 +44,7 @@ function init() {
   if (CONFIG.verbose) {
     printConfig(CONFIG);
   }
-  console.log("\n\tStart typing the words below:\n");
+  console.log(`\n\t${messages.initialMessage}\n`);
 
   text = lineGen.next().value as string;
   nextText = lineGen.next().value as string;
@@ -68,8 +72,7 @@ function start() {
 
 let checkChar = (key: Buffer) => {
   // waiting for the first char
-  if (!started)
-    start();
+  if (!started) start();
 
   // Exit on ctrl-c
   if (key.toString() === SPECIAL.CTRL_C) {
@@ -132,5 +135,4 @@ let checkChar = (key: Buffer) => {
   drawBox(CONFIG, results, text, cursor, nextText, wrote);
 };
 
-export {checkChar, init, start};
-
+export { checkChar, init, start };

@@ -35,6 +35,7 @@ cli-typer [options]
 ##### Options:
 - `-h, --help` Show help
 - `-t, --time` Given time in seconds to complete the test
+- `-l, --lang` Give words to practice in 'en' or 'es'
 - `-w, --words` Number of words to display per line
 - `-i, --input` Path to a wordlist file with new line separated words
 - `-V, --verbose` Show settings on start

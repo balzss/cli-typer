@@ -14,8 +14,8 @@ function fileToJSON(path: string) {
   }
 }
 
-function getWords(path: string): string[] {
-  let data = fs.readFileSync(path, { encoding: "utf8" });
-  return data.split("\n");
+function getWords(path: string, lang:string="en"): string[] {
+  let data = fileToJSON(path);
+  return data[lang].words;
 }
-export { fileToJSON, getWords };
+export {fileToJSON, getWords };

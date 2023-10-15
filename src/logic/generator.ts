@@ -1,4 +1,5 @@
 import { getWords } from "../persistence/reader";
+import { conf } from "./types";
 
 function random(min: number, max: number) {
   if (max === null) {
@@ -18,15 +19,15 @@ function shuffle(obj: string[]) {
   }
   return sample.slice();
 }
-function* lineGenerator(path: string, numberOfWords: number) {
-  const words: string[] = getWords(path);
+function* lineGenerator({ inputFile, wordsPerLine, language }: conf) {
+  const words: string[] = getWords(inputFile, language);
   const shuffledWords = shuffle(words);
   for (
     let i = 0;
-    i + numberOfWords < shuffledWords.length - 1;
-    i += numberOfWords
+    i + wordsPerLine < shuffledWords.length - 1;
+    i += wordsPerLine
   ) {
-    yield shuffledWords.slice(i, i + numberOfWords).join(" ");
+    yield shuffledWords.slice(i, i + wordsPerLine).join(" ");
   }
 }
 

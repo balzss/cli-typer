@@ -9,6 +9,7 @@ if (flagExists("h", "help")) {
   cli-typer [options]
 \nOptions:
   -t, --time\t\tGiven time in seconds to complete the test
+  -l, --lang\t\tGive language to practice 'en' or 'es'
   -w, --words\t\tNumber of words to display per line
   -i, --input\t\tPath to a wordlist file with new line separated words
   -V, --verbose\t\tShow settings on start

@@ -1,0 +1,32 @@
+{
+  "en": {
+    "initialMessage": "Start typing the words below:",
+    "settings": "Settings",
+    "second": "second",
+    "word": "word",
+    "pl": "per line",
+    "input":"Input",
+    "save":"Save path",
+    "timeup": "Time's up!",
+    "wpm":"WPM",
+    "ks": "All keystrokes",
+    "correct_ks": "Correct keystrokes",
+    "wrong_ks": "Wrong keystrokes",
+    "acc": "Accuracy"
+  },
+  "es": {
+    "initialMessage": "Comienza a digitar las palabras abajo:",
+    "settings": "Configuraciones",
+    "second": "segundo",
+    "word": "palabra",
+    "pl": "por línea",
+    "input":"Archivo de entrada",
+    "save":"Ruta de guardado",
+    "timeup": "Tiempo agotado!",
+    "wpm":"PPM",
+    "ks": "Pulsaciones",
+    "correct_ks": "Teclas correctas",
+    "wrong_ks": "Teclas fallidas",
+    "acc": "Presición"
+  }
+}

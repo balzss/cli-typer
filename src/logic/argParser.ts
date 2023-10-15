@@ -41,11 +41,12 @@ const flagExists = (shortFlag: string, longFlag: string) => {
 };
 function getConfig() {
   return {
+    language: argvParser(["-l", "--lang"], "en"),
     wordsPerLine: argvParser(["-w", "--words"], 9, validateIntArg),
     givenSeconds: argvParser(["-t", "--time"], 60, validateIntArg),
     inputFile: argvParser(
       ["-i", "--input"],
-      __dirname + "/../../data/mostCommon1000.txt"
+      __dirname + "/../../data.json"
     ),
     verbose: flagExists("V", "verbose"),
     savePath: argvParser(["-s", "--save"], false),

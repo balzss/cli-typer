@@ -4,6 +4,7 @@ type conf = {
   inputFile: string;
   verbose: boolean;
   savePath: string;
+  language: string;
 };
 type stats = {
   corrects: number;

@@ -5,9 +5,13 @@ import { conf, stats } from "../logic/types";
 
 let startTime: number;
 let boxDrawIsLocked = false;
+let messages: any;
 
 function setStartTime(startTim: number) {
   startTime = startTim;
+}
+function setMessages(msgs: any) {
+  messages = msgs;
 }
 function removeAnsiEscape(text: string) {
   return text.replace(ANSI_ESCAPE, "");
@@ -74,9 +78,10 @@ function drawBox(
   stdout.cursorTo(0);
   stdout.write(
     `${boxTop({ givenSeconds } as conf)}\n` +
-    `${boxText(results + text.substring(cursor))}\n` +
-    `${boxText(nextText)}\n`
-    + "\n│ " + wrote
+      `${boxText(results + text.substring(cursor))}\n` +
+      `${boxText(nextText)}\n` +
+      "\n│ " +
+      wrote
   );
 
   boxDrawIsLocked = false;
@@ -93,13 +98,13 @@ function printConfig({
   savePath,
 }: conf) {
   console.log(boxTop({ givenSeconds } as conf));
-  console.log(boxText("Settings"));
+  console.log(boxText(`${messages.settings}`));
   console.log(boxSeparator());
-  console.log(boxText(plural(givenSeconds, "second")));
-  console.log(boxText(`${plural(wordsPerLine, "word")} per line`));
-  console.log(boxText(`Input: ${inputFile}`));
+  console.log(boxText(plural(givenSeconds, `${messages.second}`)));
+  console.log(boxText(`${plural(wordsPerLine, `${messages.word}`)} ${messages.pl}`));
+  console.log(boxText(`${messages.input}: ${inputFile}`));
   if (!savePath) {
-    console.log(boxText(`Save path: ${savePath}`));
+    console.log(boxText(`${messages.save}: ${savePath}`));
   }
   console.log(boxBottom());
 }
@@ -144,12 +149,12 @@ function printStats(STATS: stats, CONFIG: conf, wrote: string): void {
   }
 
   console.log(" ".repeat(79 - 3 - wrote.length) + "│\n" + boxSeparator());
-  console.log(boxText("Time's up!"));
-  console.log(boxText(`WPM: ${STATS.wpm}`));
-  console.log(boxText(`All keystrokes: ${STATS.keypresses}`));
-  console.log(boxText(`Correct keystrokes: ${STATS.corrects}`));
-  console.log(boxText(`Wrong keystrokes: ${STATS.errors}`));
-  console.log(boxText(`Accuracy: ${STATS.accuracy}%`));
+  console.log(boxText(messages.timeup));
+  console.log(boxText(`${messages.wpm}: ${STATS.wpm}`));
+  console.log(boxText(`${messages.ks}: ${STATS.keypresses}`));
+  console.log(boxText(`${messages.correct_ks}: ${STATS.corrects}`));
+  console.log(boxText(`${messages.wrong_ks}: ${STATS.errors}`));
+  console.log(boxText(`${messages.acc}: ${STATS.accuracy}%`));
   console.log(boxBottom());
   process.exit();
 }
@@ -163,4 +168,5 @@ export {
   printConfig,
   printStats,
   setStartTime,
+  setMessages,
 };
